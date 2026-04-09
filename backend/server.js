@@ -1,3 +1,6 @@
+const dns = require('dns')                          // 👈 line 1
+dns.setServers(['8.8.8.8', '8.8.4.4'])             // 👈 line 2
+
 require('dotenv').config()
 const express   = require('express')
 const cors      = require('cors')
