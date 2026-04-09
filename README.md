@@ -1,2 +1,0 @@
-# happypaws2.0
-
