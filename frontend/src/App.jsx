@@ -4,6 +4,7 @@ import DonationPage    from './pages/DonationPage'
 import PaymentSuccess  from './pages/PaymentSuccess'
 import PaymentFail     from './pages/PaymentFail'
 import Toast           from './components/Toast'
+import Home from './pages/Home'
 
 export default function App() {
   const [toast, setToast] = useState({ msg: '', visible: false, error: false })
@@ -16,7 +17,8 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/"                 element={<DonationPage showToast={showToast} />} />
+        <Route path="/" element={<Home />} /> 
+        <Route path="/donations"                 element={<DonationPage showToast={showToast} />} />
         <Route path="/payment/success"  element={<PaymentSuccess />} />
         <Route path="/payment/fail"     element={<PaymentFail />} />
       </Routes>
