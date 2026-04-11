@@ -2,8 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/Home";
 import DonationPage from "../pages/DonationPage";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
+import Login from "../pages/user/Login";
+import Register from "../pages/user/Register";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import PaymentFail from "../pages/PaymentFail";
 
