@@ -10,11 +10,11 @@ import PaymentFail from "../pages/PaymentFail";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />, // Master Parent (manages Toast state)
+        element: <App />, 
         children: [
             {
                 path: "/",
-                element: <Home />, // Layout Parent (manages Navbar)
+                element: <Home />, 
                 children: [
                     {
                         index: true,

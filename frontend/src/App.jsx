@@ -12,7 +12,7 @@ export default function App() {
 
     return (
         <>
-            {/* All children (Home, Login, etc)  */}
+            {/* All children  */}
             <Outlet context={{ showToast }} />
 
             <Toast msg={toast.msg} visible={toast.visible} error={toast.error} />
