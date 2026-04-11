@@ -1,64 +1,65 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { useAuth } from '../context/AuthContext'
+import { useState } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-function Login() {
-    const { register, handleSubmit, formState: { errors } } = useForm()
-    const { login } = useAuth()
-    const navigate = useNavigate()
+const Login = () => {
+    const { showToast } = useOutletContext();
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-    const onSubmit = async (data) => {
-        await login(data.email, data.password)
-        navigate('/')
-    }
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await login(email, password);
+            showToast("Successfully logged in!");
+            navigate('/');
+        } catch (err) {
+            showToast("Failed to log in. Please check your credentials.", true);
+        }
+    };
 
     return (
-        <div className="flex justify-center items-center py-20 bg-base-200 min-h-[calc(100vh-64px)]">
-            <div className="card w-80 bg-base-100 border border-base-300">
-                <div className="text-center pt-6">
-                    <h1 className="text-3xl font-bold">Login now!</h1>
-                </div>
+        <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
+            <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                <h2 className="text-3xl font-bold text-center mb-6" style={{ color: '#1a6b5c' }}>Welcome Back!</h2>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="card-body">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-control">
-                        <label className="label"><span className="label-text">Email</span></label>
+                        <label className="label text-sm font-semibold">Email</label>
                         <input
                             type="email"
-                            placeholder="email"
-                            className={`input input-bordered ${errors.email ? 'input-error' : ''}`}
-                            {...register('email', {
-                                required: 'Email is required',
-                                pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
-                            })}
+                            className="input input-bordered w-full focus:outline-teal-600"
+                            placeholder="hello@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
-                        {errors.email && <span className="text-error text-sm mt-1">{errors.email.message}</span>}
                     </div>
-
                     <div className="form-control">
-                        <label className="label"><span className="label-text">Password</span></label>
+                        <label className="label text-sm font-semibold">Password</label>
                         <input
                             type="password"
-                            placeholder="password"
-                            className={`input input-bordered ${errors.password ? 'input-error' : ''}`}
-                            {...register('password', {
-                                required: 'Password is required',
-                                minLength: { value: 6, message: 'Minimum 6 characters' }
-                            })}
+                            className="input input-bordered w-full focus:outline-teal-600"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
-                        {errors.password && <span className="text-error text-sm mt-1">{errors.password.message}</span>}
-                        <label className="label">
-                            <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-                        </label>
                     </div>
-
-                    <div className="form-control mt-2">
-                        <button className="btn btn-primary w-full" type="submit">Login</button>
-                    </div>
+                    <button type="submit" className="btn w-full mt-4 text-white border-none" style={{ background: '#1a6b5c' }}>
+                        Login
+                    </button>
                 </form>
 
-                
+                <p className="text-center mt-6 text-sm text-gray-600">
+                    New to Happy Paws? <Link to="/register" className="font-bold hover:underline" style={{ color: '#1a6b5c' }}>Create an account</Link>
+                </p>
+            </div>
         </div>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;
