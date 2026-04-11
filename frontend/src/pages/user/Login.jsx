@@ -24,7 +24,7 @@ const Login = () => {
     return (
         <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
             <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <h2 className="text-3xl font-bold text-center mb-6" style={{ color: '#1a6b5c' }}>Welcome Back!</h2>
+                <h2 className="text-3xl font-bold text-center mb-6" style={{ color: '#1a6b5c' }}>Welcome Back here!</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-control">
@@ -43,7 +43,7 @@ const Login = () => {
                         <input
                             type="password"
                             className="input input-bordered w-full focus:outline-teal-600"
-                            placeholder="••••••••"
+                            placeholder="•••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required

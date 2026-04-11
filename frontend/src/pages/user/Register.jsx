@@ -63,7 +63,7 @@ const Register = () => {
                         />
                     </div>
                     <button type="submit" className="btn w-full mt-4 text-white border-none" style={{ background: '#1a6b5c' }}>
-                        Register
+                        Register now!
                     </button>
                 </form>
 
