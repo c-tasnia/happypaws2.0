@@ -28,7 +28,7 @@ const Register = () => {
         <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4 py-10">
             <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-100">
                 <h2 className="text-3xl font-bold text-center mb-2" style={{ color: '#1a6b5c' }}>Join Happy Paws</h2>
-                <p className="text-center text-gray-500 mb-6 text-sm italic">Help us find every paw a home.</p>
+                <p className="text-center text-gray-500 mb-6 text-sm italic">Donate for a better life for our furry friends.</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-control">
