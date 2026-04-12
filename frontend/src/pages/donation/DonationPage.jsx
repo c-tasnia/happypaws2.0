@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { donationsAPI } from '../api'
+import { donationsAPI } from '../../api'
 
 const PRESETS = [100, 250, 500, 1000]
 
