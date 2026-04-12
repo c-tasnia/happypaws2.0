@@ -85,7 +85,7 @@ const Login = () => {
           <div className="flex-1 h-px bg-gray-100" />
         </div>
 
-        {/* Register */}
+        
         <Link
           to="/register"
           className="block text-center py-2.5 rounded-lg border text-sm font-semibold hover:bg-teal-50 transition"
@@ -94,7 +94,8 @@ const Login = () => {
           Create an Account
         </Link>
 
-        {/* Back home */}
+        
+        
         <p className="text-center mt-4 text-xs text-gray-400">
           <Link to="/" className="hover:underline">← Back to Home</Link>
         </p>
