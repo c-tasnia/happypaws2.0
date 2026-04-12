@@ -3,7 +3,9 @@ import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
-    const { showToast } = useOutletContext();
+    const context = useOutletContext();
+    const showToast = context?.showToast;
+
     const { signup } = useAuth();
     const navigate = useNavigate();
 

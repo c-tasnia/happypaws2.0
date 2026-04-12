@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const Logo = '/LOGO.png'
@@ -13,6 +13,17 @@ const TEAL_DARK = '#155248'
 
 const Home = () => {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { currentUser, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/')
+    } catch (err) {
+      console.error('Logout failed', err)
+    }
+  }
 
   return (
     <div style={{ fontFamily: "'Georgia', serif", color: '#1a1a1a', overflowX: 'hidden' }}>
@@ -27,12 +38,10 @@ const Home = () => {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         height: '64px',
       }}>
-        {/* Logo */}
         <Link to="/" style={{ flexShrink: 0 }}>
           <img src={Logo} alt="HappyPaws" style={{ height: '40px', objectFit: 'contain' }} />
         </Link>
 
-        {/* Desktop nav links */}
         <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           {[['/', 'Home'], ['/donations', 'Donations'], ['#', 'Blog'], ['#', 'Volunteer'], ['#', 'Contact']].map(([href, label]) => (
             <Link key={label} to={href} style={{ color: '#444', textDecoration: 'none', fontSize: '15px' }}
@@ -42,16 +51,40 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Desktop buttons */}
+        {/* Desktop buttons — auth-aware */}
         <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <Link to="/login" style={{
-            padding: '8px 18px', borderRadius: '6px', fontSize: '14px',
-            border: `1.5px solid ${TEAL}`, color: TEAL, textDecoration: 'none',
-          }}>Login</Link>
-          <Link to="/donations" style={{
-            padding: '8px 20px', borderRadius: '6px', fontSize: '14px',
-            background: TEAL, color: '#fff', textDecoration: 'none', fontWeight: '600',
-          }}>Donate Now</Link>
+          {currentUser ? (
+            <>
+              <span style={{
+                fontSize: '14px', color: '#555',
+                maxWidth: '180px', overflow: 'hidden',
+                textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
+                {currentUser.email}
+              </span>
+              <button onClick={handleLogout} style={{
+                padding: '8px 18px', borderRadius: '6px', fontSize: '14px',
+                border: '1.5px solid #c0392b', color: '#c0392b',
+                background: 'transparent', cursor: 'pointer',
+                fontFamily: "'Georgia', serif",
+              }}>Logout</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" style={{
+                padding: '8px 18px', borderRadius: '6px', fontSize: '14px',
+                border: `1.5px solid ${TEAL}`, color: TEAL, textDecoration: 'none',
+              }}>Login</Link>
+              <Link to="/register" style={{
+                padding: '8px 20px', borderRadius: '6px', fontSize: '14px',
+                background: TEAL, color: '#fff', textDecoration: 'none', fontWeight: '600',
+              }}>Register</Link>
+              <Link to="/donations" style={{
+                padding: '8px 20px', borderRadius: '6px', fontSize: '14px',
+                background: TEAL, color: '#fff', textDecoration: 'none', fontWeight: '600',
+              }}>Donate Now</Link>
+            </>
+          )}
         </div>
 
         {/* Mobile: Donate + Hamburger */}
@@ -87,15 +120,31 @@ const Home = () => {
               }}
             >{label}</Link>
           ))}
-          <Link to="/login" onClick={() => setMenuOpen(false)} style={{
-            marginTop: '1rem', padding: '12px', borderRadius: '6px', fontSize: '15px',
-            border: `1.5px solid ${TEAL}`, color: TEAL, textDecoration: 'none',
-            textAlign: 'center', display: 'block',
-          }}>Login</Link>
+
+          {currentUser ? (
+            <>
+              <p style={{
+                marginTop: '1rem', fontSize: '14px', color: '#555',
+                padding: '10px 0', borderBottom: '1px solid #f0f0f0',
+              }}>
+                {currentUser.email}
+              </p>
+              <button onClick={() => { handleLogout(); setMenuOpen(false) }} style={{
+                marginTop: '0.75rem', padding: '12px', borderRadius: '6px',
+                border: '1.5px solid #c0392b', color: '#c0392b',
+                background: 'transparent', fontSize: '15px', cursor: 'pointer',
+                fontFamily: "'Georgia', serif", textAlign: 'center',
+              }}>Logout</button>
+            </>
+          ) : (
+            <Link to="/login" onClick={() => setMenuOpen(false)} style={{
+              marginTop: '1rem', padding: '12px', borderRadius: '6px', fontSize: '15px',
+              border: `1.5px solid ${TEAL}`, color: TEAL, textDecoration: 'none',
+              textAlign: 'center', display: 'block',
+            }}>Login</Link>
+          )}
         </div>
       )}
-
-      <Outlet />
 
       {/* ── Hero ── */}
       <section style={{ position: 'relative', height: '580px', background: '#0d0d0d', overflow: 'hidden' }}>
@@ -278,7 +327,6 @@ const Home = () => {
         </p>
       </footer>
 
-      {/* ── Responsive Styles ── */}
       <style>{`
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
