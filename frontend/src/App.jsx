@@ -13,7 +13,9 @@ export default function App() {
   return (
     <>
       <Outlet context={{ showToast }} />
-      <Toast msg={toast.msg} visible={toast.visible} error={toast.error} />
+      <Toast msg={toast.msg} 
+      visible={toast.visible} 
+      error={toast.error} />
     </>
   )
 }
