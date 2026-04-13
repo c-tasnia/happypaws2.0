@@ -3,63 +3,106 @@ import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
-    const { showToast } = useOutletContext();
-    const { login } = useAuth();
-    const navigate = useNavigate();
+  const context = useOutletContext();
+  const showToast = context?.showToast;
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await login(email, password);
+      if (showToast) showToast('Welcome back! 🐾');
+      navigate('/');
+    } catch (err) {
+      if (showToast) showToast('Invalid email or password.', true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await login(email, password);
-            showToast("Successfully logged in!");
-            navigate('/');
-        } catch (err) {
-            showToast("Failed to log in. Please check your credentials.", true);
-        }
-    };
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-10 font-serif">
+      <div className="w-full max-w-md bg-white rounded-2xl border border-gray-100 shadow-lg p-8">
 
-    return (
-        <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
-            <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <h2 className="text-3xl font-bold text-center mb-6" style={{ color: '#1a6b5c' }}>Welcome Back here!</h2>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="form-control">
-                        <label className="label text-sm font-semibold">Email</label>
-                        <input
-                            type="email"
-                            className="input input-bordered w-full focus:outline-teal-600"
-                            placeholder="hello@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-control">
-                        <label className="label text-sm font-semibold">Password</label>
-                        <input
-                            type="password"
-                            className="input input-bordered w-full focus:outline-teal-600"
-                            placeholder="•••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn w-full mt-4 text-white border-none" style={{ background: '#1a6b5c' }}>
-                        Login
-                    </button>
-                </form>
-
-                <p className="text-center mt-6 text-sm text-gray-600">
-                    New to Happy Paws? <Link to="/register" className="font-bold hover:underline" style={{ color: '#1a6b5c' }}>Create an account</Link>
-                </p>
-            </div>
+       
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-14 h-14 rounded-full bg-teal-50 flex items-center justify-center text-2xl mb-3">
+            🐾
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
+          <p className="text-sm text-gray-400 mt-1">Sign in to your Happy Paws account</p>
         </div>
-    );
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-600 mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="hello@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-600 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-lg text-white text-sm font-semibold tracking-wide transition"
+            style={{ background: loading ? '#a0c4bb' : '#1a6b5c', cursor: loading ? 'not-allowed' : 'pointer' }}
+          >
+            {loading ? 'Signing in...' : 'Login'}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-gray-100" />
+          <span className="text-xs text-gray-400">New to Happy Paws?</span>
+          <div className="flex-1 h-px bg-gray-100" />
+        </div>
+
+        
+        <Link
+          to="/register"
+          className="block text-center py-2.5 rounded-lg border text-sm font-semibold hover:bg-teal-50 transition"
+          style={{ borderColor: '#1a6b5c', color: '#1a6b5c' }}
+        >
+          Create an Account
+        </Link>
+
+        
+        
+        <p className="text-center mt-4 text-xs text-gray-400">
+          <Link to="/" className="hover:underline">← Back to Home</Link>
+        </p>
+
+      </div>
+    </div>
+  );
 };
 
 export default Login;
