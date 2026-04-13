@@ -95,7 +95,6 @@ const Home = () => {
         </div>
       )}
 
-      <Outlet />
 
       {/* ── Hero ── */}
       <section style={{ position: 'relative', height: '580px', background: '#0d0d0d', overflow: 'hidden' }}>
@@ -293,7 +292,5 @@ const Home = () => {
     </div>
   )
 }
-
-export default Home
 
 export default Home

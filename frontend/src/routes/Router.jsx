@@ -10,33 +10,31 @@ import PaymentFail from "../pages/donation/PaymentFail";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />, 
+        element: <App />,
         children: [
             {
-                path: "/",
-                element: <Home />, 
-                children: [
-                    {
-                        index: true,
-                        element: <DonationPage />,
-                    },
-                    {
-                        path: "login",
-                        element: <Login />,
-                    },
-                    {
-                        path: "register",
-                        element: <Register />,
-                    },
-                    {
-                        path: "payment/success",
-                        element: <PaymentSuccess />,
-                    },
-                    {
-                        path: "payment/fail",
-                        element: <PaymentFail />,
-                    },
-                ],
+                index: true,
+                element: <Home />,
+            },
+            {
+                path: "donations",
+                element: <DonationPage />,
+            },
+            {
+                path: "login",
+                element: <Login />,
+            },
+            {
+                path: "register",
+                element: <Register />,
+            },
+            {
+                path: "payment/success",
+                element: <PaymentSuccess />,
+            },
+            {
+                path: "payment/fail",
+                element: <PaymentFail />,
             },
         ],
     },
