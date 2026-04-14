@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { donationsAPI } from '../../api'
+import { useOutletContext } from 'react-router-dom'
 
 const PRESETS = [100, 250, 500, 1000]
 
@@ -12,7 +13,9 @@ const DEMO_RECENT = [
 
 const GENERAL = { _id: 'general', name: 'General Fund', species: 'All Animals', emoji: '🐾', description: 'Support all animals in our shelter equally.' }
 
-export default function DonationPage({ showToast }) {
+export default function DonationPage() {
+  const context = useOutletContext()
+  const showToast = context?.showToast
   const [pets,        setPets]      = useState([])
   const [recent,      setRecent]    = useState(DEMO_RECENT)
   const [selectedPet, setSelected]  = useState(null)
