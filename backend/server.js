@@ -7,6 +7,7 @@ const cors      = require('cors')
 const path      = require('path')
 const connectDB = require('./db')
 
+const usersRoutes = require('./routes/users')
 const petsRoutes      = require('./routes/pets')
 const donationsRoutes = require('./routes/donations')
 
