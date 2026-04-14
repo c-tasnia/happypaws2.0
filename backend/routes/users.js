@@ -3,7 +3,7 @@ const router = express.Router()
 const User = require('../models/User')
 const verifyToken = require('../middleware/verifyToken')
 
-// POST /api/users — called after register (public)
+// called after register (public)
 router.post('/', async (req, res) => {
   const { uid, name, email } = req.body
   try {
@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
   }
 })
 
-// GET /api/users/profile — logged in user's own profile (protected)
+// logged in user's  profile (protected)
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const user = await User.findOne({ uid: req.user.uid })
@@ -28,7 +28,7 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 })
 
-// GET /api/users — all users, admin only (protected)
+// all users, admin only (protected)
 router.get('/', verifyToken, async (req, res) => {
   try {
     const currentUser = await User.findOne({ uid: req.user.uid })
