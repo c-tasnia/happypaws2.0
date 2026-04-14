@@ -26,6 +26,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // ── Routes ────────────────────────────────────────────────────
+app.use('/api/users',     usersRoutes) 
 app.use('/api/pets',      petsRoutes)
 app.use('/api/donate',    donationsRoutes)
 app.use('/api/donations', donationsRoutes)
