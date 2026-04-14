@@ -7,6 +7,7 @@ const petSchema = new mongoose.Schema({
   age:           { type: Number },
   description:   { type: String },
   image_url:     { type: String },
+  images:        [{ type: String }],
   emoji:         { type: String, default: '🐾' },
   goal_amount:   { type: Number, required: true },
   raised_amount: { type: Number, default: 0 },
