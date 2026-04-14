@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 const Logo = '/LOGO1.png'
 const cat = '/cat.jpg'
 const cat2 = '/cat2.jpg'
+const pet2 = '/pet2.jpeg'
 const dog = '/dog.jpg'
 const Hero = '/HERO.png'
 
@@ -410,8 +411,8 @@ const Home = () => {
             {[
               { src: cat, h: '190px', mt: '0' },
               { src: dog, h: '190px', mt: '24px' },
-              { src: cat2, h: '160px', mt: '-24px' },
-              { src: cat, h: '160px', mt: '0' },
+              { src: cat2, h: '220px', mt: '-24px' },
+              { src: pet2, h: '220px', mt: '0' },
             ].map(({ src, h, mt }, i) => (
               <div key={i} style={{ overflow: 'hidden', borderRadius: '8px', marginTop: mt }}>
                 <img src={src} alt="" style={{ width: '100%', height: h, objectFit: 'cover', transition: 'transform 0.5s', display: 'block' }}
