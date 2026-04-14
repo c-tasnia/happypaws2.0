@@ -6,6 +6,8 @@ import Login from "../pages/user/Login";
 import Register from "../pages/user/Register";
 import PaymentSuccess from "../pages/donation/PaymentSuccess";
 import PaymentFail from "../pages/donation/PaymentFail";
+import PetsPage from '../pages/PetsPage'
+import AdminDashboard from '../pages/admin/AdminDashboard'
 
 const router = createBrowserRouter([
     {
@@ -36,6 +38,9 @@ const router = createBrowserRouter([
                 path: "payment/fail",
                 element: <PaymentFail />,
             },
+            { path: 'pets', element: <PetsPage /> },
+            { path: 'admin', element: <AdminDashboard /> },
+            
         ],
     },
 ]);
