@@ -23,11 +23,13 @@ app.use(cors({
       'https://happypaws2-0-1sen.vercel.app',
     ]
     // Allow any Vercel preview deployment
-    if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
+    if (!origin) return callback(null, true)  // SSLCommerz & server-to-server calls
+
+if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+  callback(null, true)
+} else {
+  callback(new Error('Not allowed by CORS'))
+}
   },
   credentials: true,
 }))
