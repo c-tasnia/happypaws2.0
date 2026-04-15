@@ -7,6 +7,7 @@ import PaymentFail from '../pages/donation/PaymentFail';
 import Login from "../pages/user/Login";
 import Register from "../pages/user/Register";
 import Volunteer from "../pages/Volunteer/Volunteer";
+import PetsPage from "../pages/PetsPage";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 
 const router = createBrowserRouter([
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       { path: "payment/success", element: <PaymentSuccess /> },
       { path: "payment/fail", element: <PaymentFail /> },
       { path: "volunteer", element: <Volunteer /> },
+      { path: "pets", element: <PetsPage /> },
       { path: "admin", element: <AdminDashboard /> },
     ],
   },
