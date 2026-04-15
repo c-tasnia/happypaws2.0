@@ -56,7 +56,7 @@ const PetsPage = () => {
     return photos
   }
 
-  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['#', 'Volunteer'], ['#', 'Contact']]
+  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['/volunteer', 'Volunteer'], ['#', 'Contact']]
 
   return (
     <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
