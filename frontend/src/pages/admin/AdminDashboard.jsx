@@ -19,7 +19,7 @@ const AdminDashboard = () => {
   const [tab, setTab] = useState('pets')
   const [pets, setPets] = useState([])
   const [donations, setDonations] = useState([])
-  const [volunteers, setVolunteers] = useState([])  // ← new
+  const [volunteers, setVolunteers] = useState([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState(emptyForm)
   const [editingId, setEditingId] = useState(null)
@@ -45,7 +45,6 @@ const AdminDashboard = () => {
     setDonations(Array.isArray(res.data) ? res.data : [])
   }
 
-  // ── new ──
   const fetchVolunteers = async () => {
     const token = await getToken()
     const res = await api.get('/volunteer', { headers: { Authorization: `Bearer ${token}` } })
@@ -58,7 +57,6 @@ const AdminDashboard = () => {
     showToast(`Application ${status}`)
     fetchVolunteers()
   }
-  // ── end new ──
 
   useEffect(() => {
     if (!currentUser) return
@@ -74,6 +72,11 @@ const AdminDashboard = () => {
     try {
       const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData })
       const data = await res.json()
+      console.log('Cloudinary single image response:', data)
+      if (!data.secure_url) {
+        showToast('Image upload failed — check Cloudinary config', true)
+        return
+      }
       setForm(f => ({ ...f, image_url: data.secure_url }))
       showToast('Image uploaded! ✅')
     } catch {
@@ -92,10 +95,20 @@ const AdminDashboard = () => {
         formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET)
         const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData })
         const data = await res.json()
+        console.log('Cloudinary multi image response:', data)
         return data.secure_url
       }))
-      setForm(f => ({ ...f, images: [...(f.images || []), ...urls] }))
-      showToast(`${urls.length} image(s) uploaded! ✅`)
+
+      // ✅ Filter out any undefined/null/non-http values
+      const validUrls = urls.filter(url => typeof url === 'string' && url.startsWith('http'))
+
+      if (validUrls.length === 0) {
+        showToast('Image upload failed — check Cloudinary config', true)
+        return
+      }
+
+      setForm(f => ({ ...f, images: [...(f.images || []), ...validUrls] }))
+      showToast(`${validUrls.length} image(s) uploaded! ✅`)
     } catch {
       showToast('Image upload failed', true)
     } finally {
@@ -126,10 +139,16 @@ const AdminDashboard = () => {
 
   const handleEdit = (pet) => {
     setForm({
-      name: pet.name, species: pet.species, breed: pet.breed || '',
-      age: pet.age || '', description: pet.description || '',
-      image_url: pet.image_url || '', images: pet.images || [],
-      emoji: pet.emoji || '🐾', goal_amount: pet.goal_amount
+      name: pet.name,
+      species: pet.species,
+      breed: pet.breed || '',
+      age: pet.age || '',
+      description: pet.description || '',
+      image_url: pet.image_url || '',
+      // ✅ Filter out invalid URLs when loading existing pet data
+      images: (pet.images || []).filter(url => typeof url === 'string' && url.startsWith('http')),
+      emoji: pet.emoji || '🐾',
+      goal_amount: pet.goal_amount
     })
     setEditingId(pet._id)
     setShowForm(true)
@@ -187,7 +206,6 @@ const AdminDashboard = () => {
           >
             💰 Donations
           </button>
-          {/* ── new tab button ── */}
           <button
             className={`tab tab-lg font-semibold ${tab === 'volunteers' ? 'tab-active text-primary' : 'text-muted'}`}
             onClick={() => setTab('volunteers')}
@@ -235,35 +253,59 @@ const AdminDashboard = () => {
                         />
                       </div>
                     ))}
+
+                    {/* Single cover image */}
                     <div className="form-control">
                       <label className="label text-xs font-semibold text-dark">Pet Image</label>
                       <input type="file" accept="image/*" onChange={handleImageUpload} className="file-input file-input-bordered file-input-sm w-full" />
-                      {form.image_url && (
+                      {form.image_url && typeof form.image_url === 'string' && form.image_url.startsWith('http') ? (
                         <div className="mt-2">
                           <img src={form.image_url} alt="Preview" className="h-24 w-full object-cover rounded-lg" />
                           <p className="text-xs text-muted mt-1 truncate">{form.image_url}</p>
                         </div>
-                      )}
+                      ) : null}
                     </div>
+
+                    {/* Multiple images */}
                     <div className="form-control sm:col-span-2 lg:col-span-3">
                       <label className="label text-xs font-semibold text-dark">Pet Images (multiple allowed)</label>
-                      <input type="file" accept="image/*" multiple onChange={handleMultiImageUpload} className="file-input file-input-bordered file-input-sm w-full" disabled={uploadingImages} />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleMultiImageUpload}
+                        className="file-input file-input-bordered file-input-sm w-full"
+                        disabled={uploadingImages}
+                      />
                       {uploadingImages && <p className="text-xs text-primary mt-1">Uploading...</p>}
-                      {form.images?.length > 0 && (
+
+                      {/* ✅ Only render previews for valid URLs */}
+                      {form.images?.filter(url => typeof url === 'string' && url.startsWith('http')).length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {form.images.map((url, i) => (
-                            <div key={i} className="relative">
-                              <img src={url} alt={`preview-${i}`} className="h-20 w-20 object-cover rounded-lg" />
-                              <button
-                                type="button"
-                                onClick={() => setForm(f => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }))}
-                                className="absolute -top-1 -right-1 bg-error text-white rounded-full w-4 h-4 text-xs flex items-center justify-center"
-                              >×</button>
-                            </div>
-                          ))}
+                          {form.images
+                            .filter(url => typeof url === 'string' && url.startsWith('http'))
+                            .map((url, i) => (
+                              <div key={i} className="relative">
+                                <img
+                                  src={url}
+                                  alt={`preview-${i}`}
+                                  className="h-20 w-20 object-cover rounded-lg"
+                                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setForm(f => ({
+                                    ...f,
+                                    images: f.images.filter((_, idx) => idx !== i)
+                                  }))}
+                                  className="absolute -top-1 -right-1 bg-error text-white rounded-full w-4 h-4 text-xs flex items-center justify-center"
+                                >×</button>
+                              </div>
+                            ))}
                         </div>
                       )}
                     </div>
+
                     <div className="sm:col-span-2 lg:col-span-3">
                       <button type="submit" className="btn text-white border-none bg-primary hover:bg-dark">
                         {editingId ? 'Update Pet' : 'Add Pet'}
