@@ -16,9 +16,14 @@ const app = express()
 connectDB()
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://happypaws-qu2vme25g-my-team-a4e0a14f.vercel.app',
+    'https://happypaws2-0-1sen.vercel.app',
+  ],
   credentials: true,
 }))
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
