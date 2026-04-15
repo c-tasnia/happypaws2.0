@@ -33,4 +33,9 @@ app.get('/api/health', (req, res) => {
 
 // ❌ REMOVED: app.listen() — Vercel serverless cannot bind ports
 // ✅ Just export the app
+
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'HappyPaws API is running 🐾' })
+}) 
+
 module.exports = app
