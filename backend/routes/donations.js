@@ -45,7 +45,7 @@ router.post('/pay', async (req, res) => {
     })
 
     const BACKEND  = process.env.BACKEND_URL  || 'https://happypaws2-0.vercel.app'
-    const FRONTEND = process.env.FRONTEND_URL || 'https://happypaws2-0-1sen.vercel.app'
+    const FRONTEND = process.env.FRONTEND_URL || 'https://happypaws2-0-1sen.vercel.app/api'
 
     const data = {
       total_amount:     Number(amount),
