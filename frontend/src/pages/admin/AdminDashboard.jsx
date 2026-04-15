@@ -34,7 +34,7 @@ const AdminDashboard = () => {
 
  const fetchPets = async () => {
   const token = await getToken()
-  const res = await api.get('/pets/all', {
+  const res = await api.get('/pets', {
     headers: { Authorization: `Bearer ${token}` }
   })
   setPets(Array.isArray(res.data) ? res.data : [])
