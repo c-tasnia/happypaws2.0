@@ -63,7 +63,7 @@ const Home = () => {
     try { await logout(); navigate('/') } catch (err) { console.error(err) }
   }
 
-  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['#', 'Volunteer'], ['#', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
+  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['/Volunteer', 'Volunteer'], ['#', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
 
   return (
     <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#1a1a1a', overflowX: 'hidden', background: WARM }}>
