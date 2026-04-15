@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { donationsAPI } from '../api'
+import { donationsAPI } from '../../api'
 
 export default function PaymentSuccess() {
   const [params]  = useSearchParams()

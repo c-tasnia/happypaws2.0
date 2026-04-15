@@ -1,67 +1,108 @@
-// import { Link, useNavigate } from 'react-router-dom'
-// import { useForm } from 'react-hook-form'
-// import { useAuth } from '../context/AuthContext'
+import { useState } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
-// function Login() {
-//     const { register, handleSubmit, formState: { errors } } = useForm()
-//     const { login } = useAuth()
-//     const navigate = useNavigate()
+const Login = () => {
+  const context = useOutletContext();
+  const showToast = context?.showToast;
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-//     const onSubmit = async (data) => {
-//         await login(data.email, data.password)
-//         navigate('/')
-//     }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await login(email, password);
+      if (showToast) showToast('Welcome back! 🐾');
+      navigate('/');
+    } catch (err) {
+      if (showToast) showToast('Invalid email or password.', true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//     return (
-//         <div className="flex justify-center items-center py-20 bg-base-200 min-h-[calc(100vh-64px)]">
-//             <div className="card w-80 bg-base-100 border border-base-300">
-//                 <div className="text-center pt-6">
-//                     <h1 className="text-3xl font-bold">Login now!</h1>
-//                 </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-10 font-serif">
+      <div className="w-full max-w-md bg-white rounded-2xl border border-gray-100 shadow-lg p-8">
 
-//                 <form onSubmit={handleSubmit(onSubmit)} className="card-body">
-//                     <div className="form-control">
-//                         <label className="label"><span className="label-text">Email</span></label>
-//                         <input
-//                             type="email"
-//                             placeholder="email"
-//                             className={`input input-bordered ${errors.email ? 'input-error' : ''}`}
-//                             {...register('email', {
-//                                 required: 'Email is required',
-//                                 pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
-//                             })}
-//                         />
-//                         {errors.email && <span className="text-error text-sm mt-1">{errors.email.message}</span>}
-//                     </div>
+       
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-14 h-14 rounded-full bg-teal-50 flex items-center justify-center text-2xl mb-3">
+            🐾
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
+          <p className="text-sm text-gray-400 mt-1">Sign in to your Happy Paws account</p>
+        </div>
 
-//                     <div className="form-control">
-//                         <label className="label"><span className="label-text">Password</span></label>
-//                         <input
-//                             type="password"
-//                             placeholder="password"
-//                             className={`input input-bordered ${errors.password ? 'input-error' : ''}`}
-//                             {...register('password', {
-//                                 required: 'Password is required',
-//                                 minLength: { value: 6, message: 'Minimum 6 characters' }
-//                             })}
-//                         />
-//                         {errors.password && <span className="text-error text-sm mt-1">{errors.password.message}</span>}
-//                         <label className="label">
-//                             <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-//                         </label>
-//                     </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-600 mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="hello@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition"
+            />
+          </div>
 
-//                     <div className="form-control mt-2">
-//                         <button className="btn btn-primary w-full" type="submit">Login</button>
-//                     </div>
-//                 </form>
+          <div>
+            <label className="block text-sm font-semibold text-gray-600 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition"
+            />
+          </div>
 
-//                 <Link to="/register" className="text-purple-800 pb-6 font-medium underline text-center">
-//                     Sign Up
-//                 </Link>
-//             </div>
-//         </div>
-//     )
-// }
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-lg text-white text-sm font-semibold tracking-wide transition"
+            style={{ background: loading ? '#a0c4bb' : '#1a6b5c', cursor: loading ? 'not-allowed' : 'pointer' }}
+          >
+            {loading ? 'Signing in...' : 'Login'}
+          </button>
+        </form>
 
-// export default Login
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-gray-100" />
+          <span className="text-xs text-gray-400">New to Happy Paws?</span>
+          <div className="flex-1 h-px bg-gray-100" />
+        </div>
+
+        
+        <Link
+          to="/register"
+          className="block text-center py-2.5 rounded-lg border text-sm font-semibold hover:bg-teal-50 transition"
+          style={{ borderColor: '#1a6b5c', color: '#1a6b5c' }}
+        >
+          Create an Account
+        </Link>
+
+        
+        
+        <p className="text-center mt-4 text-xs text-gray-400">
+          <Link to="/" className="hover:underline">← Back to Home</Link>
+        </p>
+
+      </div>
+    </div>
+  );
+};
+
+export default Login;
