@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-
-import api from '../../api' 
+import api from '../../api'
 
 const emptyForm = {
   name: '', species: '', breed: '', age: '',
   description: '', image_url: '', images: [], emoji: '🐾', goal_amount: ''
 }
+const LOGO = '/LOGO1.png'
 
 const AdminDashboard = () => {
   const { currentUser, logout } = useAuth()
@@ -19,6 +19,7 @@ const AdminDashboard = () => {
   const [tab, setTab] = useState('pets')
   const [pets, setPets] = useState([])
   const [donations, setDonations] = useState([])
+  const [volunteers, setVolunteers] = useState([])  // ← new
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState(emptyForm)
   const [editingId, setEditingId] = useState(null)
@@ -32,25 +33,36 @@ const AdminDashboard = () => {
 
   const getToken = () => currentUser.getIdToken()
 
- const fetchPets = async () => {
-  const token = await getToken()
-  const res = await api.get('/pets', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  setPets(Array.isArray(res.data) ? res.data : [])
-}
+  const fetchPets = async () => {
+    const token = await getToken()
+    const res = await api.get('/pets', { headers: { Authorization: `Bearer ${token}` } })
+    setPets(Array.isArray(res.data) ? res.data : [])
+  }
 
- const fetchDonations = async () => {
-  const token = await getToken()
-  const res = await api.get('/admin/donations', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  setDonations(Array.isArray(res.data) ? res.data : [])
-}
+  const fetchDonations = async () => {
+    const token = await getToken()
+    const res = await api.get('/admin/donations', { headers: { Authorization: `Bearer ${token}` } })
+    setDonations(Array.isArray(res.data) ? res.data : [])
+  }
+
+  // ── new ──
+  const fetchVolunteers = async () => {
+    const token = await getToken()
+    const res = await api.get('/volunteer', { headers: { Authorization: `Bearer ${token}` } })
+    setVolunteers(Array.isArray(res.data) ? res.data : [])
+  }
+
+  const updateVolunteerStatus = async (id, status) => {
+    const token = await getToken()
+    await api.patch(`/volunteer/${id}`, { status }, { headers: { Authorization: `Bearer ${token}` } })
+    showToast(`Application ${status}`)
+    fetchVolunteers()
+  }
+  // ── end new ──
 
   useEffect(() => {
     if (!currentUser) return
-    Promise.all([fetchPets(), fetchDonations()]).finally(() => setLoading(false))
+    Promise.all([fetchPets(), fetchDonations(), fetchVolunteers()]).finally(() => setLoading(false))
   }, [currentUser])
 
   const handleImageUpload = async (e) => {
@@ -60,14 +72,11 @@ const AdminDashboard = () => {
     formData.append('file', file)
     formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET)
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: formData,
-      })
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData })
       const data = await res.json()
       setForm(f => ({ ...f, image_url: data.secure_url }))
       showToast('Image uploaded! ✅')
-    } catch (err) {
+    } catch {
       showToast('Image upload failed', true)
     }
   }
@@ -81,16 +90,13 @@ const AdminDashboard = () => {
         const formData = new FormData()
         formData.append('file', file)
         formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET)
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, {
-          method: 'POST',
-          body: formData,
-        })
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData })
         const data = await res.json()
         return data.secure_url
       }))
       setForm(f => ({ ...f, images: [...(f.images || []), ...urls] }))
       showToast(`${urls.length} image(s) uploaded! ✅`)
-    } catch (err) {
+    } catch {
       showToast('Image upload failed', true)
     } finally {
       setUploadingImages(false)
@@ -98,25 +104,26 @@ const AdminDashboard = () => {
   }
 
   const handleSubmit = async (e) => {
-  e.preventDefault()
-  try {
-    const token = await getToken()
-    const payload = { ...form, age: Number(form.age), goal_amount: Number(form.goal_amount) }
-    const res = editingId
-      ? await api.put(`/pets/${editingId}`, payload, { headers: { Authorization: `Bearer ${token}` } })
-      : await api.post('/pets', payload, { headers: { Authorization: `Bearer ${token}` } })
-    if (res.status === 200 || res.status === 201) {
-      showToast(editingId ? 'Pet updated! 🐾' : 'Pet added! 🐾')
-      setForm(emptyForm); setEditingId(null); setShowForm(false)
-      fetchPets()
-    } else {
+    e.preventDefault()
+    try {
+      const token = await getToken()
+      const payload = { ...form, age: Number(form.age), goal_amount: Number(form.goal_amount) }
+      const res = editingId
+        ? await api.put(`/pets/${editingId}`, payload, { headers: { Authorization: `Bearer ${token}` } })
+        : await api.post('/pets', payload, { headers: { Authorization: `Bearer ${token}` } })
+      if (res.status === 200 || res.status === 201) {
+        showToast(editingId ? 'Pet updated! 🐾' : 'Pet added! 🐾')
+        setForm(emptyForm); setEditingId(null); setShowForm(false)
+        fetchPets()
+      } else {
+        showToast('Something went wrong', true)
+      }
+    } catch (err) {
+      console.error(err)
       showToast('Something went wrong', true)
     }
-  } catch (err) {
-    console.error('Full error:', err)
-    showToast('Something went wrong', true)
   }
-}
+
   const handleEdit = (pet) => {
     setForm({
       name: pet.name, species: pet.species, breed: pet.breed || '',
@@ -130,14 +137,12 @@ const AdminDashboard = () => {
   }
 
   const handleDelete = async (id) => {
-  if (!confirm('Deactivate this pet?')) return
-  const token = await getToken()
-  await api.delete(`/pets/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  showToast('Pet deactivated')
-  fetchPets()
-}
+    if (!confirm('Deactivate this pet?')) return
+    const token = await getToken()
+    await api.delete(`/pets/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    showToast('Pet deactivated')
+    fetchPets()
+  }
 
   if (loading) return (
     <div className="min-h-[60vh] flex items-center justify-center">
@@ -148,17 +153,23 @@ const AdminDashboard = () => {
   return (
     <div className="bg-cream min-h-screen">
       {/* Header */}
-      <div className="bg-dark text-white px-6 py-5 flex justify-between items-center">
-        <div>
-          <h1 className="font-serif text-2xl font-bold">Admin Dashboard 🐾</h1>
+      <div className="bg-dark text-white px-6 py-2 flex justify-between items-center">
+        <div className="bg-dark text-white px-6 py-2 flex justify-between items-center">
+          <Link to="/" className="flex items-center">
+            <img src={LOGO} alt="HappyPaws" className="h-10 w-auto object-contain" />
+          </Link>
+          <h1 className="font-serif text-1xl font-bold px-4">Admin Dashboard</h1>
           <p className="text-white/60 text-xs mt-0.5">{currentUser?.email}</p>
         </div>
-        <button
-          onClick={() => { logout(); navigate('/') }}
-          className="btn btn-sm btn-outline text-white border-white/40 hover:bg-white/10 hover:border-white"
-        >
-          Logout
-        </button>
+        <div className="hidden md:flex items-center gap-6 text-sm text-white">
+          <Link to="/admin" className="text-primary font-semibold">Admin</Link>
+          <button
+            onClick={() => { logout(); navigate('/') }}
+            className="px-4 py-2 rounded-full bg-primary text-white hover:bg-dark transition-colors"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -176,6 +187,13 @@ const AdminDashboard = () => {
           >
             💰 Donations
           </button>
+          {/* ── new tab button ── */}
+          <button
+            className={`tab tab-lg font-semibold ${tab === 'volunteers' ? 'tab-active text-primary' : 'text-muted'}`}
+            onClick={() => setTab('volunteers')}
+          >
+            🙋 Volunteers ({volunteers.length})
+          </button>
         </div>
 
         {/* ── Pets Tab ── */}
@@ -191,7 +209,6 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            {/* Form */}
             {showForm && (
               <div className="card bg-white border border-base-200 shadow-sm mb-8">
                 <div className="card-body">
@@ -220,12 +237,7 @@ const AdminDashboard = () => {
                     ))}
                     <div className="form-control">
                       <label className="label text-xs font-semibold text-dark">Pet Image</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="file-input file-input-bordered file-input-sm w-full"
-                      />
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="file-input file-input-bordered file-input-sm w-full" />
                       {form.image_url && (
                         <div className="mt-2">
                           <img src={form.image_url} alt="Preview" className="h-24 w-full object-cover rounded-lg" />
@@ -235,14 +247,7 @@ const AdminDashboard = () => {
                     </div>
                     <div className="form-control sm:col-span-2 lg:col-span-3">
                       <label className="label text-xs font-semibold text-dark">Pet Images (multiple allowed)</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleMultiImageUpload}
-                        className="file-input file-input-bordered file-input-sm w-full"
-                        disabled={uploadingImages}
-                      />
+                      <input type="file" accept="image/*" multiple onChange={handleMultiImageUpload} className="file-input file-input-bordered file-input-sm w-full" disabled={uploadingImages} />
                       {uploadingImages && <p className="text-xs text-primary mt-1">Uploading...</p>}
                       {form.images?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -269,25 +274,15 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {/* Pets Table */}
             <div className="card bg-white border border-base-200 shadow-sm overflow-x-auto">
               <table className="table table-zebra w-full text-sm">
                 <thead className="bg-light text-dark">
-                  <tr>
-                    {['Pet', 'Species', 'Goal', 'Raised', 'Status', 'Actions'].map(h => (
-                      <th key={h}>{h}</th>
-                    ))}
-                  </tr>
+                  <tr>{['Pet', 'Species', 'Goal', 'Raised', 'Status', 'Actions'].map(h => <th key={h}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {pets.map(pet => (
                     <tr key={pet._id}>
-                      <td>
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xl">{pet.emoji}</span>
-                          <span className="font-semibold">{pet.name}</span>
-                        </div>
-                      </td>
+                      <td><div className="flex items-center gap-2"><span className="text-2xl">{pet.emoji}</span><span className="font-semibold">{pet.name}</span></div></td>
                       <td className="text-muted">{pet.species}</td>
                       <td>৳{pet.goal_amount.toLocaleString()}</td>
                       <td className="text-primary font-semibold">৳{pet.raised_amount.toLocaleString()}</td>
@@ -298,12 +293,8 @@ const AdminDashboard = () => {
                       </td>
                       <td>
                         <div className="flex gap-2">
-                          <button onClick={() => handleEdit(pet)} className="btn btn-xs btn-outline border-primary text-primary hover:bg-primary hover:text-white">
-                            Edit
-                          </button>
-                          <button onClick={() => handleDelete(pet._id)} className="btn btn-xs btn-outline border-error text-error hover:bg-error hover:text-white">
-                            Delete
-                          </button>
+                          <button onClick={() => handleEdit(pet)} className="btn btn-xs btn-outline border-primary text-primary hover:bg-primary hover:text-white">Edit</button>
+                          <button onClick={() => handleDelete(pet._id)} className="btn btn-xs btn-outline border-error text-error hover:bg-error hover:text-white">Delete</button>
                         </div>
                       </td>
                     </tr>
@@ -321,11 +312,7 @@ const AdminDashboard = () => {
             <div className="card bg-white border border-base-200 shadow-sm overflow-x-auto">
               <table className="table table-zebra w-full text-sm">
                 <thead className="bg-light text-dark">
-                  <tr>
-                    {['Donor', 'Email', 'Phone', 'Amount', 'Pet', 'Status', 'Date', 'Message'].map(h => (
-                      <th key={h}>{h}</th>
-                    ))}
-                  </tr>
+                  <tr>{['Donor', 'Email', 'Phone', 'Amount', 'Pet', 'Status', 'Date', 'Message'].map(h => <th key={h}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {donations.map(d => (
@@ -340,12 +327,63 @@ const AdminDashboard = () => {
                           d.status === 'success' ? 'bg-light text-dark' :
                           d.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-red-100 text-red-600'
-                        }`}>
-                          {d.status}
-                        </span>
+                        }`}>{d.status}</span>
                       </td>
                       <td className="text-muted">{new Date(d.createdAt).toLocaleDateString()}</td>
                       <td className="text-muted">{d.message || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ── Volunteers Tab ── */}
+        {tab === 'volunteers' && (
+          <div>
+            <h2 className="text-lg font-bold text-dark mb-6">Volunteer Applications ({volunteers.length})</h2>
+            <div className="card bg-white border border-base-200 shadow-sm overflow-x-auto">
+              <table className="table table-zebra w-full text-sm">
+                <thead className="bg-light text-dark">
+                  <tr>{['Name', 'Email', 'Phone', 'Interest', 'Availability', 'Message', 'Date', 'Status', 'Actions'].map(h => <th key={h}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {volunteers.length === 0 && (
+                    <tr><td colSpan={9} className="text-center text-muted py-8">No applications yet</td></tr>
+                  )}
+                  {volunteers.map(v => (
+                    <tr key={v._id}>
+                      <td className="font-semibold">{v.fullName}</td>
+                      <td className="text-muted">{v.email}</td>
+                      <td className="text-muted">{v.phone}</td>
+                      <td>{v.interest}</td>
+                      <td>{v.availability}</td>
+                      <td className="text-muted max-w-xs truncate">{v.message || '—'}</td>
+                      <td className="text-muted">{new Date(v.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        <span className={`badge badge-sm font-semibold border-none ${
+                          v.status === 'approved' ? 'bg-light text-dark' :
+                          v.status === 'rejected' ? 'bg-red-100 text-red-600' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>{v.status}</span>
+                      </td>
+                      <td>
+                        <div className="flex gap-2">
+                          {v.status !== 'approved' && (
+                            <button
+                              onClick={() => updateVolunteerStatus(v._id, 'approved')}
+                              className="btn btn-xs btn-outline border-primary text-primary hover:bg-primary hover:text-white"
+                            >Approve</button>
+                          )}
+                          {v.status !== 'rejected' && (
+                            <button
+                              onClick={() => updateVolunteerStatus(v._id, 'rejected')}
+                              className="btn btn-xs btn-outline border-error text-error hover:bg-error hover:text-white"
+                            >Reject</button>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
