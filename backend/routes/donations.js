@@ -3,6 +3,7 @@ const SSLCommerzPayment = require('sslcommerz-lts')
 const Pet = require('../models/Pet')
 const Donation = require('../models/Donation')
 
+
 const router = express.Router()
 
 const getSSL = () => new SSLCommerzPayment(
@@ -216,4 +217,25 @@ router.get('/recent', async (req, res) => {
   }
 })
 
+
 module.exports = router
+module.exports.handleSuccess = handleSuccess
+module.exports.handleFailure = handleFailureRedirect
+module.exports.handleIPN = async (req, res) => {
+  try {
+    const { tran_id, val_id, status } = req.body
+
+    if (status === 'VALID' || status === 'VALIDATED') {
+      const validation = await getSSL().validate({ val_id })
+
+      if (validation?.status === 'VALID' || validation?.status === 'VALIDATED') {
+        await markDonationSuccess(tran_id)
+      }
+    }
+
+    res.status(200).send('OK')
+  } catch (err) {
+    console.error('IPN error:', err)
+    res.status(200).send('OK')
+  }
+}
