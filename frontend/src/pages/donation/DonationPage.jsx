@@ -114,10 +114,6 @@ export default function DonationPage() {
             <Link to="/admin" className="hover:text-primary transition-colors">Admin</Link>
             
           </div>
-        {/* <div className="hidden md:flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-          <span className="text-white/70 text-xs">Secured by</span>
-          <span className="text-white font-semibold text-xs">SSLCommerz</span>
-        </div> */}
       </header>
 
       <div className="bg-gradient-to-br from-primary to-dark px-6 py-14 text-center">
