@@ -7,13 +7,11 @@ const cors      = require('cors')
 const path      = require('path')
 const connectDB = require('./db')
 
-
 const petsRoutes      = require('./routes/pets')
 const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
 
-const app  = express()
-const PORT = process.env.PORT || 5000
+const app = express()
 
 connectDB()
 
@@ -33,13 +31,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', db: 'mongodb', time: new Date().toISOString() })
 })
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'public')))
-  app.get('*', (_, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')))
-}
-
-app.listen(PORT, () => {
-  console.log(`🐾 HappyPaws (MongoDB) running → http://localhost:${PORT}`)
-  console.log(`   SSLCommerz : ${process.env.SSLCOMMERZ_IS_LIVE === 'true' ? '🟢 LIVE' : '🟡 SANDBOX'}`)
-})
+// ❌ REMOVED: app.listen() — Vercel serverless cannot bind ports
+// ✅ Just export the app
 module.exports = app
