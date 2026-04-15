@@ -28,7 +28,7 @@ const Volunteer = () => {
     e.preventDefault()
 
     try {
-     await axios.post('/api/volunteer', formData)
+     axios.post('https://happypaws2-0.vercel.app/api/volunteer', data)
       setShowPopup(true)
 
       setTimeout(() => {
