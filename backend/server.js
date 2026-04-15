@@ -7,6 +7,7 @@ const cors      = require('cors')
 const path      = require('path')
 const connectDB = require('./db')
 
+
 const petsRoutes      = require('./routes/pets')
 const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
@@ -41,3 +42,4 @@ app.listen(PORT, () => {
   console.log(`🐾 HappyPaws (MongoDB) running → http://localhost:${PORT}`)
   console.log(`   SSLCommerz : ${process.env.SSLCOMMERZ_IS_LIVE === 'true' ? '🟢 LIVE' : '🟡 SANDBOX'}`)
 })
+module.exports = app
