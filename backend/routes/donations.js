@@ -115,27 +115,16 @@ router.post('/pay', async (req, res) => {
 })
 
 const handleSuccess = async (req, res) => {
-  try {
-    const source = req.method === 'GET' ? req.query : req.body
-    const { tran_id, val_id, status, value_a } = source
+  const source = req.method === 'GET' ? req.query : req.body
+  const { tran_id, value_a } = source
 
-    if (status !== 'VALID' && status !== 'VALIDATED') {
-      return res.redirect(`${getFrontendUrl()}/payment/fail`)
-    }
+  const base = (value_a && value_a.startsWith('http'))
+    ? value_a
+    : `${getFrontendUrl()}/payment/success`
 
-    const validation = await getSSL().validate({ val_id })
-
-    if (validation?.status === 'VALID' || validation?.status === 'VALIDATED') {
-      await markDonationSuccess(tran_id)
-      const redirectUrl = value_a || `${getFrontendUrl()}/payment/success`
-      return res.redirect(`${redirectUrl}?tran_id=${encodeURIComponent(tran_id)}`)
-    }
-
-    return res.redirect(`${getFrontendUrl()}/payment/fail`)
-  } catch (err) {
-    console.error('Payment success error:', err)
-    return res.redirect(`${getFrontendUrl()}/payment/fail`)
-  }
+  return res.redirect(
+    `${base}?tran_id=${encodeURIComponent(tran_id || '')}`
+  )
 }
 
 router.post('/success', handleSuccess)
