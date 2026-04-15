@@ -28,8 +28,7 @@ const Volunteer = () => {
     e.preventDefault()
 
     try {
-      await axios.post('http://localhost:5000/api/volunteer', formData)
-
+     await axios.post('/api/volunteer', formData)
       setShowPopup(true)
 
       setTimeout(() => {
