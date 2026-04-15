@@ -133,17 +133,13 @@ router.get('/success', handleSuccess)
 const handleFailureRedirect = async (req, res) => {
   try {
     const source = req.method === 'GET' ? req.query : req.body
-    const { tran_id, value_b } = source
+    const { tran_id } = source
 
     if (tran_id) {
       await Donation.findOneAndUpdate({ tran_id }, { status: 'failed' }).catch(() => {})
     }
 
-    const redirectUrl = (value_b && value_b.startsWith('http'))
-      ? value_b
-      : `${getFrontendUrl()}/payment/fail`
-
-    return res.redirect(redirectUrl)
+    return res.redirect(`${getFrontendUrl()}/payment/fail`)
   } catch (err) {
     console.error('Fail/cancel redirect error:', err)
     return res.redirect(`${getFrontendUrl()}/payment/fail`)
