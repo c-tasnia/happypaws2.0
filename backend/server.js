@@ -21,9 +21,8 @@ app.use(cors({
     const allowed = [
       'http://localhost:5173',
       'https://happypaws2-0-1sen.vercel.app',
-      'https://sandbox.sslcommerz.com',   // ✅ SSLCommerz sandbox callback
-      'https://securepay.sslcommerz.com', // ✅ SSLCommerz live callback
     ]
+    // Allow any Vercel preview deployment
     if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
       callback(null, true)
     } else {
@@ -36,3 +35,29 @@ app.use(cors({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+app.use('/api/pets',      petsRoutes)
+app.use('/api/donate',    donationsRoutes)
+app.use('/api/donations', donationsRoutes)
+app.use('/api/admin',     adminRoutes)
+app.use('/api/volunteer', volunteerRoutes)
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', db: 'mongodb', time: new Date().toISOString() })
+})
+
+// ❌ REMOVED: app.listen() — Vercel serverless cannot bind ports
+// ✅ Just export the app
+
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'HappyPaws API is running 🐾' })
+}) 
+
+// ✅ Only listen when running locally, not on Vercel
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`)
+  })
+}
+
+module.exports = app
