@@ -44,8 +44,8 @@ router.post('/pay', async (req, res) => {
       status:      'pending',
     })
 
-    const BACKEND  = process.env.BACKEND_URL  || 'http://localhost:5000'
-    const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:5173'
+    const BACKEND  = process.env.BACKEND_URL  || 'https://happypaws2-0.vercel.app'
+    const FRONTEND = process.env.FRONTEND_URL || 'https://happypaws2-0-1sen.vercel.app'
 
     const data = {
       total_amount:     Number(amount),
