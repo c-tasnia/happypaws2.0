@@ -16,6 +16,18 @@ const app = express()
 
 connectDB()
 
+// server.js — place this BEFORE app.use(cors(...))
+
+const donationsRoutes = require('./routes/donations')
+
+// SSLCommerz hits these — no browser, no CORS needed
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.post('/api/donate/success', require('./routes/donations').handleSuccess)
+app.post('/api/donate/fail',    require('./routes/donations').handleFailure)
+app.post('/api/donate/cancel',  require('./routes/donations').handleFailure)
+app.post('/api/donate/ipn',     require('./routes/donations').handleIPN)
+
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
