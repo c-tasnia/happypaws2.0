@@ -21,7 +21,7 @@ app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
       'http://localhost:5173',
-      'https://happypaws2-0-1sen.vercel.app/api',
+      'https://happypaws2-0-1sen.vercel.app',
     ]
     // Allow any Vercel preview deployment
     if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
