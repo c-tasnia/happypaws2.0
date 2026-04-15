@@ -12,7 +12,6 @@ const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
 
-
 const app = express()
 
 connectDB()
@@ -52,5 +51,13 @@ app.get('/api/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'HappyPaws API is running 🐾' })
 }) 
+
+// ✅ Only listen when running locally, not on Vercel
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`)
+  })
+}
 
 module.exports = app
