@@ -15,7 +15,7 @@ const PetsPage = () => {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    fetch(`${API}/api/pets`)
+    fetch(`${API}/pets`)
       .then(r => r.json())
       .then(data => { setPets(data); setLoading(false) })
       .catch(() => setLoading(false))
