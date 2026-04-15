@@ -16,11 +16,18 @@ const app = express()
 connectDB()
 
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://happypaws-qu2vme25g-my-team-a4e0a14f.vercel.app',
-    'https://happypaws2-0-1sen.vercel.app',
-  ],
+  origin: (origin, callback) => {
+    const allowed = [
+      'http://localhost:5173',
+      'https://happypaws2-0-1sen.vercel.app',
+    ]
+    // Allow any Vercel preview deployment
+    if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
   credentials: true,
 }))
 
