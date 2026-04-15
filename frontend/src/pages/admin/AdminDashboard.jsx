@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+import api from '../../api' 
 
 const emptyForm = {
   name: '', species: '', breed: '', age: '',
@@ -32,23 +32,21 @@ const AdminDashboard = () => {
 
   const getToken = () => currentUser.getIdToken()
 
-  const fetchPets = async () => {
-    const token = await getToken()
-    const res = await fetch(`${API}/api/pets/all`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    const data = await res.json()
-    setPets(Array.isArray(data) ? data : [])
-  }
+ const fetchPets = async () => {
+  const token = await getToken()
+  const res = await api.get('/pets/all', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  setPets(Array.isArray(res.data) ? res.data : [])
+}
 
-  const fetchDonations = async () => {
-    const token = await getToken()
-    const res = await fetch(`${API}/api/admin/donations`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    const data = await res.json()
-    setDonations(Array.isArray(data) ? data : [])
-  }
+ const fetchDonations = async () => {
+  const token = await getToken()
+  const res = await api.get('/admin/donations', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  setDonations(Array.isArray(res.data) ? res.data : [])
+}
 
   useEffect(() => {
     if (!currentUser) return
@@ -100,33 +98,25 @@ const AdminDashboard = () => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      const token = await getToken()
-      console.log('Token:', token)
-      console.log('API URL:', API)
-      const url = editingId ? `${API}/api/pets/${editingId}` : `${API}/api/pets`
-      console.log('Posting to:', url)
-      const res = await fetch(url, {
-        method: editingId ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ ...form, age: Number(form.age), goal_amount: Number(form.goal_amount) }),
-      })
-      console.log('Response status:', res.status)
-      const data = await res.json()
-      console.log('Response data:', data)
-      if (res.ok) {
-        showToast(editingId ? 'Pet updated! 🐾' : 'Pet added! 🐾')
-        setForm(emptyForm); setEditingId(null); setShowForm(false)
-        fetchPets()
-      } else {
-        showToast('Something went wrong', true)
-      }
-    } catch (err) {
-      console.error('Full error:', err)
+  e.preventDefault()
+  try {
+    const token = await getToken()
+    const payload = { ...form, age: Number(form.age), goal_amount: Number(form.goal_amount) }
+    const res = editingId
+      ? await api.put(`/pets/${editingId}`, payload, { headers: { Authorization: `Bearer ${token}` } })
+      : await api.post('/pets', payload, { headers: { Authorization: `Bearer ${token}` } })
+    if (res.status === 200 || res.status === 201) {
+      showToast(editingId ? 'Pet updated! 🐾' : 'Pet added! 🐾')
+      setForm(emptyForm); setEditingId(null); setShowForm(false)
+      fetchPets()
+    } else {
+      showToast('Something went wrong', true)
     }
+  } catch (err) {
+    console.error('Full error:', err)
+    showToast('Something went wrong', true)
   }
-
+}
   const handleEdit = (pet) => {
     setForm({
       name: pet.name, species: pet.species, breed: pet.breed || '',
@@ -140,15 +130,14 @@ const AdminDashboard = () => {
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Deactivate this pet?')) return
-    const token = await getToken()
-    await fetch(`${API}/api/pets/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    showToast('Pet deactivated')
-    fetchPets()
-  }
+  if (!confirm('Deactivate this pet?')) return
+  const token = await getToken()
+  await api.delete(`/pets/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  showToast('Pet deactivated')
+  fetchPets()
+}
 
   if (loading) return (
     <div className="min-h-[60vh] flex items-center justify-center">
