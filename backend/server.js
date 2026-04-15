@@ -4,7 +4,6 @@ dns.setServers(['8.8.8.8', '8.8.4.4'])
 require('dotenv').config()
 const express   = require('express')
 const cors      = require('cors')
-const path      = require('path')
 const connectDB = require('./db')
 
 const petsRoutes      = require('./routes/pets')
@@ -16,38 +15,32 @@ const app = express()
 
 connectDB()
 
-// server.js — place this BEFORE app.use(cors(...))
-
-const donationsRoutes = require('./routes/donations')
-
-// SSLCommerz hits these — no browser, no CORS needed
+// ✅ Parse body FIRST before any routes
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.post('/api/donate/success', require('./routes/donations').handleSuccess)
-app.post('/api/donate/fail',    require('./routes/donations').handleFailure)
-app.post('/api/donate/cancel',  require('./routes/donations').handleFailure)
-app.post('/api/donate/ipn',     require('./routes/donations').handleIPN)
 
+// ✅ SSLCommerz callbacks — registered BEFORE cors
+app.post('/api/donate/success', donationsRoutes.handleSuccess)
+app.post('/api/donate/fail',    donationsRoutes.handleFailure)
+app.post('/api/donate/cancel',  donationsRoutes.handleFailure)
+app.post('/api/donate/ipn',     donationsRoutes.handleIPN)
+
+// ✅ CORS for all browser requests
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
       'http://localhost:5173',
       'https://happypaws2-0-1sen.vercel.app',
     ]
-    // Allow any Vercel preview deployment
-    if (!origin) return callback(null, true)  // SSLCommerz & server-to-server calls
-
-if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
-  callback(null, true)
-} else {
-  callback(new Error('Not allowed by CORS'))
-}
+    if (!origin) return callback(null, true)
+    if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
   },
   credentials: true,
 }))
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/pets',      petsRoutes)
 app.use('/api/donate',    donationsRoutes)
@@ -59,14 +52,10 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', db: 'mongodb', time: new Date().toISOString() })
 })
 
-// ❌ REMOVED: app.listen() — Vercel serverless cannot bind ports
-// ✅ Just export the app
-
 app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'HappyPaws API is running 🐾' })
-}) 
+})
 
-// ✅ Only listen when running locally, not on Vercel
 if (require.main === module) {
   const PORT = process.env.PORT || 5000
   app.listen(PORT, () => {
