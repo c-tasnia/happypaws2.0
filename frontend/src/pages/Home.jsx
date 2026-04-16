@@ -80,7 +80,7 @@ const Home = () => {
         transition: 'all 0.4s ease',
       }}>
         <Link to="/" style={{ flexShrink: 0 }}>
-          <img src={Logo} alt="HappyPaws" style={{ height: '44px', objectFit: 'contain', filter: scrolled ? 'none' : 'brightness(0) invert(1)' }} />
+          <img src={Logo} alt="HappyPaws" style={{ height: '44px', objectFit: 'contain'}} />
         </Link>
 
         <div className="desk-nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -476,7 +476,7 @@ const Home = () => {
 
       {/* ── Footer ── */}
       <footer style={{ background: '#0f0f0f', color: '#777', padding: '3rem 2rem', textAlign: 'center', fontSize: '14px' }}>
-        <img src={Logo} alt="HappyPaws" style={{ height: '32px', marginBottom: '1.5rem', opacity: 0.5, filter: 'brightness(0) invert(1)' }} />
+        <img src={Logo} alt="HappyPaws" style={{ height: '32px', marginBottom: '1.5rem', opacity: 0.5}} />
         <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
           {[['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donations'], ['/blogs', 'Blog'], ['#', 'Volunteer'], ['#', 'Contact']].map(([href, label]) => (
             <Link key={label} to={href} style={{ color: '#666', textDecoration: 'none', fontSize: '13px', letterSpacing: '0.06em', transition: 'color 0.2s' }}
