@@ -1,12 +1,29 @@
 const express     = require('express')
 const Blog        = require('../models/Blog')
 const verifyAdmin = require('../middleware/verifyAdmin')
+const admin       = require('../firebase/firebaseAdmin')  // 👈 add this
 const router      = express.Router()
 
 // ── GET /api/admin/blogs ─────────────────────────────────────────────────────
-router.get('/blogs', verifyAdmin, async (req, res) => {  // 👈 add verifyAdmin
+router.get('/blogs', async (req, res) => {  // 👈 no verifyAdmin here
   try {
-    const filter = req.isAdmin ? {} : { published: true }
+    let isAdmin = false
+    const authHeader = req.headers.authorization
+
+    if (authHeader?.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.split('Bearer ')[1]
+        const decoded = await admin.auth().verifyIdToken(token)
+        const adminEmails = process.env.ADMIN_EMAILS?.split(',') || []
+        if (adminEmails.includes(decoded.email)) {
+          isAdmin = true
+        }
+      } catch (err) {
+        // invalid token — treat as guest
+      }
+    }
+
+    const filter = isAdmin ? {} : { published: true }
     const blogs  = await Blog.find(filter).sort({ createdAt: -1 })
     res.json(blogs)
   } catch (err) {
@@ -29,7 +46,6 @@ router.post('/blogs', verifyAdmin, async (req, res) => {
 })
 
 // ── PUT /api/admin/blogs/:id ─────────────────────────────────────────────────
-// Full update — replaces all editable fields.
 router.put('/blogs/:id', verifyAdmin, async (req, res) => {
   try {
     const { title, excerpt, content, cover_image, tags, published } = req.body
@@ -49,13 +65,11 @@ router.put('/blogs/:id', verifyAdmin, async (req, res) => {
 })
 
 // ── PATCH /api/admin/blogs/:id ───────────────────────────────────────────────
-// Toggles (or explicitly sets) the published field only.
 router.patch('/blogs/:id', verifyAdmin, async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id)
     if (!blog) return res.status(404).json({ message: 'Blog not found' })
 
-    // If caller sends { published: true/false }, honour it; otherwise toggle.
     blog.published = req.body.published !== undefined
       ? Boolean(req.body.published)
       : !blog.published
