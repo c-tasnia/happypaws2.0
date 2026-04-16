@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import CommunityBoardPreview from '../components/CommunityBoardPreview'
 
 const Logo = '/LOGO1.png'
 const cat = '/pet4.jpeg'
@@ -473,6 +474,27 @@ const Home = () => {
           >Donate Now</Link>
         </div>
       </section>
+
+      {/* ── Community Board Preview ── */}
+      
+      <section style={{ padding: '4rem 1.25rem', background: '#fff' }}>
+         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
+          <p style={{ fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: TEAL, marginBottom: '0.75rem', textAlign: 'center' }}>
+            Words of Kindness
+          </p>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.4rem)', fontWeight: '700', marginBottom: '0.5rem', textAlign: 'center' }}>
+            Community Board
+          </h2>
+          <p style={{ color: '#888', textAlign: 'center', fontSize: '15px', marginBottom: '3rem' }}>
+            Kind words from our wonderful supporters 🐾
+          </p>
+
+          {/* Cards Grid */}
+                 <CommunityBoardPreview />
+
+                   </div>
+             </section>
 
       {/* ── Footer ── */}
       <footer style={{ background: '#0f0f0f', color: '#777', padding: '3rem 2rem', textAlign: 'center', fontSize: '14px' }}>
