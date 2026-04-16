@@ -10,6 +10,7 @@ const petsRoutes      = require('./routes/pets')
 const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
+const blogRoutes = require('./routes/blogRoutes')
 
 const app = express()
 
@@ -47,6 +48,8 @@ app.use('/api/donate',    donationsRoutes)
 app.use('/api/donations', donationsRoutes)
 app.use('/api/admin',     adminRoutes)
 app.use('/api/volunteer', volunteerRoutes)
+app.use('/api',           blogRoutes)  
+
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', db: 'mongodb', time: new Date().toISOString() })
