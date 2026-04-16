@@ -5,7 +5,7 @@ const verifyAdmin = require('../middleware/verifyAdmin')
 const router = express.Router()
 
 // ─────────────────────────────────────────────
-// PUBLIC ROUTE: only published blogs
+// ✅ PUBLIC ROUTE: only published blogs
 // GET /api/blogs
 // ─────────────────────────────────────────────
 router.get('/blogs', async (req, res) => {
