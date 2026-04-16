@@ -3,10 +3,9 @@ const Blog        = require('../models/Blog')
 const verifyAdmin = require('../middleware/verifyAdmin')
 const router      = express.Router()
 
-// ── GET /api/admin/blogs .
-router.get('/blogs', async (req, res) => {
+// ── GET /api/admin/blogs ─────────────────────────────────────────────────────
+router.get('/blogs', verifyAdmin, async (req, res) => {  // 👈 add verifyAdmin
   try {
-    // verifyAdmin sets req.isAdmin (or attach your own flag)
     const filter = req.isAdmin ? {} : { published: true }
     const blogs  = await Blog.find(filter).sort({ createdAt: -1 })
     res.json(blogs)
