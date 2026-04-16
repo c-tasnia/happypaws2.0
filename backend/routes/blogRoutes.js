@@ -1,58 +1,25 @@
-const express = require('express')
-const Blog = require('../models/Blog')
+const express     = require('express')
+const Blog        = require('../models/Blog')
 const verifyAdmin = require('../middleware/verifyAdmin')
+const router      = express.Router()
 
-const router = express.Router()
-
-// ─────────────────────────────────────────────
-// ✅ PUBLIC ROUTE: only published blogs
-// GET /api/blogs
-// ─────────────────────────────────────────────
+// ── GET /api/admin/blogs .
 router.get('/blogs', async (req, res) => {
   try {
-    const blogs = await Blog.find({ published: true })
-      .sort({ createdAt: -1 })
-
+    // verifyAdmin sets req.isAdmin (or attach your own flag)
+    const filter = req.isAdmin ? {} : { published: true }
+    const blogs  = await Blog.find(filter).sort({ createdAt: -1 })
     res.json(blogs)
   } catch (err) {
     res.status(500).json({ message: 'Server error' })
   }
 })
 
-
-// ─────────────────────────────────────────────
-// 🔐 ADMIN ROUTE: all blogs (published + drafts)
-// GET /api/admin/blogs
-// ─────────────────────────────────────────────
-router.get('/admin/blogs', verifyAdmin, async (req, res) => {
-  try {
-    const blogs = await Blog.find()
-      .sort({ createdAt: -1 })
-
-    res.json(blogs)
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' })
-  }
-})
-
-
-// ─────────────────────────────────────────────
-// 🔐 CREATE BLOG
-// POST /api/admin/blogs
-// ─────────────────────────────────────────────
-router.post('/admin/blogs', verifyAdmin, async (req, res) => {
+// ── POST /api/admin/blogs ────────────────────────────────────────────────────
+router.post('/blogs', verifyAdmin, async (req, res) => {
   try {
     const { title, excerpt, content, cover_image, tags, published } = req.body
-
-    const blog = await Blog.create({
-      title,
-      excerpt,
-      content,
-      cover_image,
-      tags,
-      published
-    })
-
+    const blog = await Blog.create({ title, excerpt, content, cover_image, tags, published })
     res.status(201).json(blog)
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -62,25 +29,17 @@ router.post('/admin/blogs', verifyAdmin, async (req, res) => {
   }
 })
 
-
-// ─────────────────────────────────────────────
-// 🔐 UPDATE BLOG (FULL REPLACE)
-// PUT /api/admin/blogs/:id
-// ─────────────────────────────────────────────
-router.put('/admin/blogs/:id', verifyAdmin, async (req, res) => {
+// ── PUT /api/admin/blogs/:id ─────────────────────────────────────────────────
+// Full update — replaces all editable fields.
+router.put('/blogs/:id', verifyAdmin, async (req, res) => {
   try {
     const { title, excerpt, content, cover_image, tags, published } = req.body
-
     const blog = await Blog.findByIdAndUpdate(
       req.params.id,
       { title, excerpt, content, cover_image, tags, published },
       { new: true, runValidators: true }
     )
-
-    if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' })
-    }
-
+    if (!blog) return res.status(404).json({ message: 'Blog not found' })
     res.json(blog)
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -90,45 +49,30 @@ router.put('/admin/blogs/:id', verifyAdmin, async (req, res) => {
   }
 })
 
-
-// ─────────────────────────────────────────────
-// 🔐 TOGGLE PUBLISH STATUS
-// PATCH /api/admin/blogs/:id
-// ─────────────────────────────────────────────
-router.patch('/admin/blogs/:id', verifyAdmin, async (req, res) => {
+// ── PATCH /api/admin/blogs/:id ───────────────────────────────────────────────
+// Toggles (or explicitly sets) the published field only.
+router.patch('/blogs/:id', verifyAdmin, async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id)
+    if (!blog) return res.status(404).json({ message: 'Blog not found' })
 
-    if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' })
-    }
-
-    blog.published =
-      req.body.published !== undefined
-        ? Boolean(req.body.published)
-        : !blog.published
+    // If caller sends { published: true/false }, honour it; otherwise toggle.
+    blog.published = req.body.published !== undefined
+      ? Boolean(req.body.published)
+      : !blog.published
 
     await blog.save()
-
     res.json(blog)
   } catch (err) {
     res.status(500).json({ message: 'Server error' })
   }
 })
 
-
-// ─────────────────────────────────────────────
-// 🔐 DELETE BLOG
-// DELETE /api/admin/blogs/:id
-// ─────────────────────────────────────────────
-router.delete('/admin/blogs/:id', verifyAdmin, async (req, res) => {
+// ── DELETE /api/admin/blogs/:id ──────────────────────────────────────────────
+router.delete('/blogs/:id', verifyAdmin, async (req, res) => {
   try {
     const blog = await Blog.findByIdAndDelete(req.params.id)
-
-    if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' })
-    }
-
+    if (!blog) return res.status(404).json({ message: 'Blog not found' })
     res.json({ message: 'Blog deleted' })
   } catch (err) {
     res.status(500).json({ message: 'Server error' })
