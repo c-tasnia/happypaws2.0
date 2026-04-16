@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const Logo = '/LOGO1.png'
-const cat = '/cat.jpg'
+const cat = '/pet4.jpeg'
 const cat2 = '/cat2.jpg'
 const pet2 = '/pet2.jpeg'
 const dog = '/dog.jpg'
@@ -63,7 +63,7 @@ const Home = () => {
     try { await logout(); navigate('/') } catch (err) { console.error(err) }
   }
 
-  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['#', 'Volunteer'], ['#', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
+  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['/Volunteer', 'Volunteer'], ['#', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
 
   return (
     <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#1a1a1a', overflowX: 'hidden', background: WARM }}>
@@ -407,12 +407,12 @@ const Home = () => {
             >Learn More</Link>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
             {[
-              { src: cat, h: '190px', mt: '0' },
-              { src: dog, h: '190px', mt: '24px' },
-              { src: cat2, h: '220px', mt: '-24px' },
-              { src: pet2, h: '220px', mt: '0' },
+              { src: cat, h: '250px', mt: '-30px' },
+              { src: dog, h: '230px', mt: '-10px' },
+              { src: cat2, h: '260px', mt: '0px' },
+              { src: pet2, h: '260px', mt: '0' },
             ].map(({ src, h, mt }, i) => (
               <div key={i} style={{ overflow: 'hidden', borderRadius: '8px', marginTop: mt }}>
                 <img src={src} alt="" style={{ width: '100%', height: h, objectFit: 'cover', transition: 'transform 0.5s', display: 'block' }}
