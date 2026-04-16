@@ -396,7 +396,7 @@ const Home = () => {
             <p style={{ color: '#666', fontSize: '15.5px', lineHeight: 1.9, marginBottom: '2rem' }}>
               We ensure lifelong, dignified care for those who remain in our sanctuary — transforming lives one rescue at a time.
             </p>
-            <Link to="/about" style={{
+            <Link to="/blogs" style={{
               display: 'inline-block', padding: '11px 28px', borderRadius: '4px',
               border: `1.5px solid ${TEAL}`, color: TEAL, textDecoration: 'none',
               fontSize: '13px', fontWeight: '600', letterSpacing: '0.06em', textTransform: 'uppercase',
