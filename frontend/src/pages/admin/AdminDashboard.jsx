@@ -105,7 +105,7 @@ const AdminDashboard = () => {
             />
           </Link>
           <h1 className="font-serif text-xl font-bold">Admin Dashboard</h1>
-          <p className="text-white/60 text-xs">{currentUser?.name}</p>
+          <p className="text-white/60 text-xs">{currentUser?.email}</p>
         </div>
         <div className="hidden md:flex items-center gap-6 text-sm text-white">
           <Link to="/admin" className="text-primary font-semibold">
