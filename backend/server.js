@@ -48,7 +48,7 @@ app.use('/api/donate',    donationsRoutes)
 app.use('/api/donations', donationsRoutes)
 app.use('/api/admin',     adminRoutes)
 app.use('/api/volunteer', volunteerRoutes)
-app.use('/api/blogs', blogRoutes)  
+app.use('/api/admin', blogRoutes)  
 
 
 app.get('/api/health', (req, res) => {
