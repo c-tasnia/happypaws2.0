@@ -109,9 +109,9 @@ export default function DonationPage() {
         </div>
         </div>
         <div className="hidden md:flex items-center gap-6 text-sm text-white">
-            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-            <Link to="/pets" className="hover:text-primary transition-colors">Our Pets</Link>
-            <Link to="/volunteer" className="hover:text-primary transition-colors">Volunteer</Link>            
+            <Link to="/" className="hover:text-dark transition-colors">Home</Link>
+            <Link to="/pets" className="hover:text-dark transition-colors">Our Pets</Link>
+            <Link to="/volunteer" className="hover:text-dark transition-colors">Volunteer</Link>            
           </div>
       </header>
 
