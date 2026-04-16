@@ -63,7 +63,7 @@ const Home = () => {
     try { await logout(); navigate('/') } catch (err) { console.error(err) }
   }
 
-  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['/Volunteer', 'Volunteer'], ['#', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
+  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['/Volunteer', 'Volunteer'], ['/blogs', 'Blog'], ['#', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
 
   return (
     <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#1a1a1a', overflowX: 'hidden', background: WARM }}>
@@ -478,7 +478,7 @@ const Home = () => {
       <footer style={{ background: '#0f0f0f', color: '#777', padding: '3rem 2rem', textAlign: 'center', fontSize: '14px' }}>
         <img src={Logo} alt="HappyPaws" style={{ height: '32px', marginBottom: '1.5rem', opacity: 0.5, filter: 'brightness(0) invert(1)' }} />
         <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          {[['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donations'], ['#', 'Blog'], ['#', 'Volunteer'], ['#', 'Contact']].map(([href, label]) => (
+          {[['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donations'], ['/blogs', 'Blog'], ['#', 'Volunteer'], ['#', 'Contact']].map(([href, label]) => (
             <Link key={label} to={href} style={{ color: '#666', textDecoration: 'none', fontSize: '13px', letterSpacing: '0.06em', transition: 'color 0.2s' }}
               onMouseEnter={e => e.target.style.color = '#aaa'}
               onMouseLeave={e => e.target.style.color = '#666'}
