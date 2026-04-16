@@ -13,7 +13,7 @@ const BlogList = () => {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    fetch(`${API}/api/blogs`)
+    fetch(`${API}/api/admin/blogs`)
       .then(r => r.json())
       .then(data => { setBlogs(data); setLoading(false) })
       .catch(() => setLoading(false))
