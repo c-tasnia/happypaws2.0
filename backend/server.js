@@ -23,12 +23,13 @@ connectDB()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// ✅ Open CORS for SSLCommerz webhook routes
+
+// ✅ Open CORS for SSLCommerz webhook routes (both GET and POST)
 const openCors = cors({ origin: '*' })
-app.post('/api/donate/success', openCors)
-app.post('/api/donate/fail',    openCors)
-app.post('/api/donate/cancel',  openCors)
-app.post('/api/donate/ipn',     openCors)
+app.use('/api/donate/success', openCors)
+app.use('/api/donate/fail',    openCors)
+app.use('/api/donate/cancel',  openCors)
+app.use('/api/donate/ipn',     openCors)
 
 // ✅ Restricted CORS for everything else
 app.use(cors({
