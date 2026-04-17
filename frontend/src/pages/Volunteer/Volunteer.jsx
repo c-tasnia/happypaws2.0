@@ -77,7 +77,7 @@ const Volunteer = () => {
         }}
       >
         <Link to="/">
-          <img src="/LOGO.png" alt="HappyPaws" style={{ height: '40px' }} />
+          <img src="/LOGO1.png" alt="HappyPaws" style={{ height: '40px' }} />
         </Link>
 
         <div
