@@ -12,9 +12,11 @@ const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
 const blogRoutes = require('./routes/blogRoutes')
 
-// ✅ ADD THIS — import Anthropic
-const Anthropic = require('@anthropic-ai/sdk')
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+// Groq 
+const Groq = require('groq-sdk')
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+
+const Pet = require('./models/Pet')
 
 const app = express()
 
@@ -23,11 +25,7 @@ connectDB()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.post('/api/donate/success', donationsRoutes.handleSuccess)
-app.post('/api/donate/fail',    donationsRoutes.handleFailure)
-app.post('/api/donate/cancel',  donationsRoutes.handleFailure)
-app.post('/api/donate/ipn',     donationsRoutes.handleIPN)
-
+// ✅ CORS
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
@@ -44,29 +42,47 @@ app.use(cors({
   credentials: true,
 }))
 
+app.post('/api/donate/success', donationsRoutes.handleSuccess)
+app.post('/api/donate/fail',    donationsRoutes.handleFailure)
+app.post('/api/donate/cancel',  donationsRoutes.handleFailure)
+app.post('/api/donate/ipn',     donationsRoutes.handleIPN)
+
+// ✅ Single /api/chat route using Groq
+app.post('/api/chat', async (req, res) => {
+  const { messages } = req.body
+
+  try {
+    const pets = await Pet.find({ adopted: false }).limit(10).lean()
+    const petList = pets.length
+      ? pets.map(p => `${p.name} (${p.species}, ${p.age} yrs)`).join(', ')
+      : 'No pets currently listed'
+
+    const response = await groq.chat.completions.create({
+      model: 'llama3-8b-8192',
+      messages: [
+        {
+          role: 'system',
+          content: `You are a friendly assistant for HappyPaws Animal Shelter.
+Currently available pets: ${petList}
+Help users with adoption, donations, and volunteering. Keep responses short and warm.`
+        },
+        ...messages
+      ]
+    })
+
+    res.json({ reply: response.choices[0].message.content })
+  } catch (err) {
+    console.error('Chat error:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 app.use('/api/pets',      petsRoutes)
 app.use('/api/donate',    donationsRoutes)
 app.use('/api/donations', donationsRoutes)
 app.use('/api/admin',     adminRoutes)
 app.use('/api/volunteer', volunteerRoutes)
 app.use('/api',           blogRoutes)
-
-// ✅ ADD THIS — chat route
-app.post('/api/chat', async (req, res) => {
-  const { messages } = req.body
-  try {
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
-      system: 'You are a friendly assistant for HappyPaws Animal Shelter. Help users with questions about pet adoption, donations, volunteering, and general shelter info. Keep responses short and warm.',
-      messages: messages,
-    })
-    res.json({ reply: response.content[0].text })
-  } catch (err) {
-    console.error('Chat error:', err)
-    res.status(500).json({ error: 'Something went wrong' })
-  }
-})
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', db: 'mongodb', time: new Date().toISOString() })
