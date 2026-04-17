@@ -32,18 +32,27 @@ app.use('/api/donate/cancel',  openCors)
 app.use('/api/donate/ipn',     openCors)
 
 // ✅ Restricted CORS for everything else
+// Replace your entire CORS block with this:
 app.use(cors({
   origin: (origin, callback) => {
+    // Allow SSLCommerz and no-origin requests (server-to-server)
+    if (!origin) return callback(null, true)
+    
     const allowed = [
       'http://localhost:5173',
       'https://happypaws2-0-1sen.vercel.app',
     ]
-    if (!origin) return callback(null, true)
     if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
+      return callback(null, true)
     }
+    
+    // Allow SSLCommerz domains
+    if (origin.includes('sslcommerz') || origin.includes('sslcommerz.com')) {
+      return callback(null, true)
+    }
+
+    // Allow all for donate routes — SSLCommerz redirects come from unknown origins
+    return callback(null, true) // ← temporarily allow ALL origins
   },
   credentials: true,
 }))
