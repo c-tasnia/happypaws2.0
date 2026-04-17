@@ -341,7 +341,7 @@ export default function DonationPage() {
       </div>
 
       <footer className="bg-dark text-white/40 text-center py-6 text-xs">
-        © 2024 HappyPaws Bangladesh · Powered by SSLCommerz · Made with 🐾 for animals
+        © 2026 HappyPaws Bangladesh · Powered by SSLCommerz · Made with 🐾 for animals
       </footer>
     </div>
   )
