@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import CommunityBoardPreview from '../components/CommunityBoardPreview'
 
 const Logo = '/LOGO1.png'
-const cat = '/cat.jpg'
+const cat = '/pet4.jpeg'
 const cat2 = '/cat2.jpg'
 const pet2 = '/pet2.jpeg'
 const dog = '/dog.jpg'
@@ -63,7 +64,7 @@ const Home = () => {
     try { await logout(); navigate('/') } catch (err) { console.error(err) }
   }
 
-  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['/Volunteer', 'Volunteer'], ['#', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
+  const navLinks = [['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donate'], ['/Volunteer', 'Volunteer'], ['/blogs', 'Blog'], ['/contact', 'Contact'], ...(isAdmin ? [['/admin', 'Admin']] : [])]
 
   return (
     <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#1a1a1a', overflowX: 'hidden', background: WARM }}>
@@ -80,7 +81,7 @@ const Home = () => {
         transition: 'all 0.4s ease',
       }}>
         <Link to="/" style={{ flexShrink: 0 }}>
-          <img src={Logo} alt="HappyPaws" style={{ height: '44px', objectFit: 'contain', filter: scrolled ? 'none' : 'brightness(0) invert(1)' }} />
+          <img src={Logo} alt="HappyPaws" style={{ height: '44px', objectFit: 'contain'}} />
         </Link>
 
         <div className="desk-nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -396,7 +397,7 @@ const Home = () => {
             <p style={{ color: '#666', fontSize: '15.5px', lineHeight: 1.9, marginBottom: '2rem' }}>
               We ensure lifelong, dignified care for those who remain in our sanctuary — transforming lives one rescue at a time.
             </p>
-            <Link to="/about" style={{
+            <Link to="/blogs" style={{
               display: 'inline-block', padding: '11px 28px', borderRadius: '4px',
               border: `1.5px solid ${TEAL}`, color: TEAL, textDecoration: 'none',
               fontSize: '13px', fontWeight: '600', letterSpacing: '0.06em', textTransform: 'uppercase',
@@ -407,12 +408,12 @@ const Home = () => {
             >Learn More</Link>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
             {[
-              { src: cat, h: '190px', mt: '0' },
-              { src: dog, h: '190px', mt: '24px' },
-              { src: cat2, h: '220px', mt: '-24px' },
-              { src: pet2, h: '220px', mt: '0' },
+              { src: cat, h: '250px', mt: '-30px' },
+              { src: dog, h: '230px', mt: '-10px' },
+              { src: cat2, h: '260px', mt: '0px' },
+              { src: pet2, h: '260px', mt: '0' },
             ].map(({ src, h, mt }, i) => (
               <div key={i} style={{ overflow: 'hidden', borderRadius: '8px', marginTop: mt }}>
                 <img src={src} alt="" style={{ width: '100%', height: h, objectFit: 'cover', transition: 'transform 0.5s', display: 'block' }}
@@ -474,11 +475,32 @@ const Home = () => {
         </div>
       </section>
 
+      {/* ── Community Board Preview ── */}
+      
+      <section style={{ padding: '4rem 1.25rem', background: '#fff' }}>
+         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
+          <p style={{ fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: TEAL, marginBottom: '0.75rem', textAlign: 'center' }}>
+            Words of Kindness
+          </p>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.4rem)', fontWeight: '700', marginBottom: '0.5rem', textAlign: 'center' }}>
+            Community Board
+          </h2>
+          <p style={{ color: '#888', textAlign: 'center', fontSize: '15px', marginBottom: '3rem' }}>
+            Kind words from our wonderful supporters 🐾
+          </p>
+
+          {/* Cards Grid */}
+                 <CommunityBoardPreview />
+
+                   </div>
+             </section>
+
       {/* ── Footer ── */}
       <footer style={{ background: '#0f0f0f', color: '#777', padding: '3rem 2rem', textAlign: 'center', fontSize: '14px' }}>
-        <img src={Logo} alt="HappyPaws" style={{ height: '32px', marginBottom: '1.5rem', opacity: 0.5, filter: 'brightness(0) invert(1)' }} />
+        <img src={Logo} alt="HappyPaws" style={{ height: '32px', marginBottom: '1.5rem', opacity: 0.5}} />
         <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          {[['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donations'], ['#', 'Blog'], ['#', 'Volunteer'], ['#', 'Contact']].map(([href, label]) => (
+          {[['/', 'Home'], ['/pets', 'Our Pets'], ['/donations', 'Donations'], ['/blogs', 'Blog'], ['#', 'Volunteer'], ['#', 'Contact']].map(([href, label]) => (
             <Link key={label} to={href} style={{ color: '#666', textDecoration: 'none', fontSize: '13px', letterSpacing: '0.06em', transition: 'color 0.2s' }}
               onMouseEnter={e => e.target.style.color = '#aaa'}
               onMouseLeave={e => e.target.style.color = '#666'}

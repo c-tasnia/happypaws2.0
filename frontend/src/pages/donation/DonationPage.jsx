@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { donationsAPI } from '../../api'
 import { Link, useOutletContext } from 'react-router-dom'
+import DonorWall from '../../components/DonorWall'
 
 const PRESETS = [100, 250, 500, 1000]
 const LOGO = '/LOGO1.png'
@@ -31,6 +32,14 @@ export default function DonationPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', phone: '', amount: '', message: '' })
 
+  
+  const [stats, setStats] = useState({
+    donors: 0,
+    raised: 0,
+    rescued: 0
+  })
+
+
   useEffect(() => {
     donationsAPI.getPets()
       .then(res => {
@@ -43,6 +52,15 @@ export default function DonationPage() {
       .then(res => setRecent(Array.isArray(res.data) ? res.data.slice(0, 6) : []))
       .catch(() => {})
   }, [])
+
+ useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/stats`)
+    .then(res => res.json())
+    .then(data => {
+      console.log("STATS RESPONSE:", data)
+      setStats(data)
+    })
+}, [])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -109,10 +127,9 @@ export default function DonationPage() {
         </div>
         </div>
         <div className="hidden md:flex items-center gap-6 text-sm text-white">
-            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-            <Link to="/volunteer" className="hover:text-primary transition-colors">Volunteer</Link>
-            <Link to="/admin" className="hover:text-primary transition-colors">Admin</Link>
-            
+            <Link to="/" className="hover:text-dark transition-colors">Home</Link>
+            <Link to="/pets" className="hover:text-dark transition-colors">Our Pets</Link>
+            <Link to="/volunteer" className="hover:text-dark transition-colors">Volunteer</Link>            
           </div>
       </header>
 
@@ -121,13 +138,22 @@ export default function DonationPage() {
         <h2 className="font-serif text-4xl md:text-5xl text-white mb-3">Give Love,<br /><em className="text-secondary not-italic">Save a Life</em></h2>
         <p className="text-white/60 text-base max-w-md mx-auto">Your donation goes directly to food, medical care, and shelter for animals in Bangladesh.</p>
         <div className="flex justify-center gap-6 mt-8 flex-wrap">
-          {[['142', 'Donors'], ['৳48k', 'Raised'], ['12', 'Rescued']].map(([n, l]) => (
-            <div key={l} className="text-center">
-              <div className="font-serif text-2xl text-accent font-bold">{n}</div>
-              <div className="text-white/50 text-xs mt-0.5">{l}</div>
-            </div>
-          ))}
-        </div>
+  {[
+    [stats.donors, 'Donors'],
+    [
+  `৳${stats.raised >= 1000
+    ? (stats.raised / 1000).toFixed(1) + 'k'
+    : stats.raised}`,
+  'Raised'
+],
+    [stats.rescued, 'Pets']
+  ].map(([n, l]) => (
+    <div key={l} className="text-center">
+      <div className="font-serif text-2xl text-accent font-bold">{n}</div>
+      <div className="text-white/50 text-xs mt-0.5">{l}</div>
+    </div>
+  ))}
+</div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-12 grid md:grid-cols-2 gap-10 items-start">
@@ -314,6 +340,8 @@ export default function DonationPage() {
           </div>
         </div>
       </div>
+
+      <DonorWall  />
 
       <footer className="bg-dark text-white/40 text-center py-6 text-xs">
         © 2024 HappyPaws Bangladesh · Powered by SSLCommerz · Made with 🐾 for animals
