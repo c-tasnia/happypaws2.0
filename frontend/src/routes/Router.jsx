@@ -10,6 +10,7 @@ import Register from "../pages/user/Register";
 import Volunteer from "../pages/Volunteer/Volunteer";
 import PetsPage from "../pages/PetsPage";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import Contact from "../pages/Contact";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "pets", element: <PetsPage /> },
       { path: "admin", element: <AdminDashboard /> },
       { path: "blogs", element: <BlogList /> },
+      { path: "contact", element: <Contact /> },
     ],
   },
 ]);
