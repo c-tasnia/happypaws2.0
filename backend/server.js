@@ -14,7 +14,6 @@ const { router: volunteerRoutes } = require('./routes/volunteer')
 const blogRoutes = require('./routes/blogRoutes')
 
 const Donation = require('./models/Donation')
-const Pet = require('./models/Pet')
 
 const Groq = require('groq-sdk')
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
