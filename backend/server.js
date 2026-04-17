@@ -13,7 +13,7 @@ const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
 const blogRoutes = require('./routes/blogRoutes')
-
+const commentsRoutes = require('./routes/comments')
 const Donation = require('./models/Donation')
 
 const Groq = require('groq-sdk')
@@ -34,6 +34,7 @@ app.use('/api/donate/success', openCors)
 app.use('/api/donate/fail',    openCors)
 app.use('/api/donate/cancel',  openCors)
 app.use('/api/donate/ipn',     openCors)
+app.use('/api/comments', commentsRoutes)
 
 // ✅ Restricted CORS for everything else
 // Replace your entire CORS block with this:
