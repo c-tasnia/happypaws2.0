@@ -96,6 +96,8 @@ app.use('/api',           blogRoutes)
 
 app.get('/api/stats', async (req, res) => {
   const donors = await Donation.countDocuments()
+  console.log("DB NAME:", mongoose.connection.name)
+  console.log("DB HOST:", mongoose.connection.host)
 
   const raisedData = await Donation.aggregate([
     { $group: { _id: null, total: { $sum: "$amount" } } }
