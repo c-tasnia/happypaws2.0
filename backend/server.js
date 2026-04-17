@@ -12,21 +12,22 @@ const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
 const blogRoutes = require('./routes/blogRoutes')
 
+// ✅ ADD THIS — import Anthropic
+const Anthropic = require('@anthropic-ai/sdk')
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
 const app = express()
 
 connectDB()
 
-// ✅ Parse body FIRST before any routes
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// ✅ SSLCommerz callbacks — registered BEFORE cors
 app.post('/api/donate/success', donationsRoutes.handleSuccess)
 app.post('/api/donate/fail',    donationsRoutes.handleFailure)
 app.post('/api/donate/cancel',  donationsRoutes.handleFailure)
 app.post('/api/donate/ipn',     donationsRoutes.handleIPN)
 
-// ✅ CORS for all browser requests
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
@@ -48,8 +49,24 @@ app.use('/api/donate',    donationsRoutes)
 app.use('/api/donations', donationsRoutes)
 app.use('/api/admin',     adminRoutes)
 app.use('/api/volunteer', volunteerRoutes)
-app.use('/api',           blogRoutes)  
+app.use('/api',           blogRoutes)
 
+// ✅ ADD THIS — chat route
+app.post('/api/chat', async (req, res) => {
+  const { messages } = req.body
+  try {
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: 'You are a friendly assistant for HappyPaws Animal Shelter. Help users with questions about pet adoption, donations, volunteering, and general shelter info. Keep responses short and warm.',
+      messages: messages,
+    })
+    res.json({ reply: response.content[0].text })
+  } catch (err) {
+    console.error('Chat error:', err)
+    res.status(500).json({ error: 'Something went wrong' })
+  }
+})
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', db: 'mongodb', time: new Date().toISOString() })
