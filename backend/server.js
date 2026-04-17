@@ -101,7 +101,7 @@ app.get('/api/stats', async (req, res) => {
     { $group: { _id: null, total: { $sum: "$amount" } } }
   ])
 
-  const rescued = await Pet.countDocuments({ adopted: true })
+  const rescued = await Pet.countDocuments()
 
   res.json({
     donors,
