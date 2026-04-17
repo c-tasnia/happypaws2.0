@@ -91,6 +91,22 @@ app.use('/api/admin',     adminRoutes)
 app.use('/api/volunteer', volunteerRoutes)
 app.use('/api',           blogRoutes)
 
+app.get('/api/stats', async (req, res) => {
+  const donors = await Donation.countDocuments()
+
+  const raisedData = await Donation.aggregate([
+    { $group: { _id: null, total: { $sum: "$amount" } } }
+  ])
+
+  const rescued = await Pet.countDocuments({ adopted: true })
+
+  res.json({
+    donors,
+    raised: raisedData[0]?.total || 0,
+    rescued
+  })
+})
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', db: 'mongodb', time: new Date().toISOString() })
 })
