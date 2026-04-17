@@ -12,10 +12,8 @@ const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
 const blogRoutes = require('./routes/blogRoutes')
 
-// Groq 
 const Groq = require('groq-sdk')
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
-
 const Pet = require('./models/Pet')
 
 const app = express()
@@ -25,25 +23,14 @@ connectDB()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// ✅ Allow SSLCommerz webhooks
-app.post('/api/donate/success', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  next()
-})
-app.post('/api/donate/fail', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  next()
-})
-app.post('/api/donate/cancel', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  next()
-})
-app.post('/api/donate/ipn', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  next()
-})
+// ✅ Open CORS for SSLCommerz webhook routes
+const openCors = cors({ origin: '*' })
+app.post('/api/donate/success', openCors)
+app.post('/api/donate/fail',    openCors)
+app.post('/api/donate/cancel',  openCors)
+app.post('/api/donate/ipn',     openCors)
 
-// ✅ CORS
+// ✅ Restricted CORS for everything else
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
@@ -60,10 +47,8 @@ app.use(cors({
   credentials: true,
 }))
 
-// ✅ Single /api/chat route using Groq
 app.post('/api/chat', async (req, res) => {
   const { messages } = req.body
-
   try {
     const pets = await Pet.find({ adopted: false }).limit(10).lean()
     const petList = pets.length
@@ -82,7 +67,6 @@ Help users with adoption, donations, and volunteering. Keep responses short and 
         ...messages
       ]
     })
-
     res.json({ reply: response.choices[0].message.content })
   } catch (err) {
     console.error('Chat error:', err)
