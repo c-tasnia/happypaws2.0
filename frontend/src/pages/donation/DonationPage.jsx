@@ -31,6 +31,14 @@ export default function DonationPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', phone: '', amount: '', message: '' })
 
+  
+  const [stats, setStats] = useState({
+    donors: 0,
+    raised: 0,
+    rescued: 0
+  })
+
+
   useEffect(() => {
     donationsAPI.getPets()
       .then(res => {
@@ -43,6 +51,15 @@ export default function DonationPage() {
       .then(res => setRecent(Array.isArray(res.data) ? res.data.slice(0, 6) : []))
       .catch(() => {})
   }, [])
+
+  useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/api/stats`)
+    .then(res => res.json())
+    .then(data => setStats(data))
+    .catch(() => {
+      setStats({ donors: 0, raised: 0, rescued: 0 })
+    })
+}, [])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -120,13 +137,17 @@ export default function DonationPage() {
         <h2 className="font-serif text-4xl md:text-5xl text-white mb-3">Give Love,<br /><em className="text-secondary not-italic">Save a Life</em></h2>
         <p className="text-white/60 text-base max-w-md mx-auto">Your donation goes directly to food, medical care, and shelter for animals in Bangladesh.</p>
         <div className="flex justify-center gap-6 mt-8 flex-wrap">
-          {[['142', 'Donors'], ['৳48k', 'Raised'], ['12', 'Rescued']].map(([n, l]) => (
-            <div key={l} className="text-center">
-              <div className="font-serif text-2xl text-accent font-bold">{n}</div>
-              <div className="text-white/50 text-xs mt-0.5">{l}</div>
-            </div>
-          ))}
-        </div>
+  {[
+    [stats.donors, 'Donors'],
+    [`৳${stats.raised?.toLocaleString() || 0}`, 'Raised'],
+    [stats.rescued, 'Pets']
+  ].map(([n, l]) => (
+    <div key={l} className="text-center">
+      <div className="font-serif text-2xl text-accent font-bold">{n}</div>
+      <div className="text-white/50 text-xs mt-0.5">{l}</div>
+    </div>
+  ))}
+</div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-12 grid md:grid-cols-2 gap-10 items-start">
