@@ -25,6 +25,24 @@ connectDB()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// ✅ Allow SSLCommerz webhooks
+app.post('/api/donate/success', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  next()
+})
+app.post('/api/donate/fail', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  next()
+})
+app.post('/api/donate/cancel', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  next()
+})
+app.post('/api/donate/ipn', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  next()
+})
+
 // ✅ CORS
 app.use(cors({
   origin: (origin, callback) => {
