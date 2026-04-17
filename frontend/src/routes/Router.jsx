@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import BlogList from "../pages/BlogList";
 import App from "../App";
 import Home from "../pages/Home";
 import DonationPage from "../pages/donation/DonationPage";
@@ -9,6 +10,7 @@ import Register from "../pages/user/Register";
 import Volunteer from "../pages/Volunteer/Volunteer";
 import PetsPage from "../pages/PetsPage";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import Contact from "../pages/Contact";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +26,8 @@ const router = createBrowserRouter([
       { path: "volunteer", element: <Volunteer /> },
       { path: "pets", element: <PetsPage /> },
       { path: "admin", element: <AdminDashboard /> },
+      { path: "blogs", element: <BlogList /> },
+      { path: "contact", element: <Contact /> },
     ],
   },
 ]);
