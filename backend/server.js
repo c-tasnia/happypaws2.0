@@ -42,11 +42,6 @@ app.use(cors({
   credentials: true,
 }))
 
-app.post('/api/donate/success', donationsRoutes.handleSuccess)
-app.post('/api/donate/fail',    donationsRoutes.handleFailure)
-app.post('/api/donate/cancel',  donationsRoutes.handleFailure)
-app.post('/api/donate/ipn',     donationsRoutes.handleIPN)
-
 // ✅ Single /api/chat route using Groq
 app.post('/api/chat', async (req, res) => {
   const { messages } = req.body
