@@ -6,9 +6,14 @@ import CommunityBoardPreview from '../components/CommunityBoardPreview'
 const Logo = '/LOGO1.png'
 const cat = '/pet4.jpeg'
 const cat2 = '/cat2.jpg'
+const puppy = '/puppy.jpg'
 const pet2 = '/pet2.jpeg'
 const dog = '/dog.jpg'
 const Hero = '/HERO.png'
+const Cop = '/cop2.png'
+const Catg = '/catg.jpeg'
+const bird = '/bird.jpeg'
+
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
@@ -169,7 +174,7 @@ const Home = () => {
 
       {/* ── Hero ── */}
       <section style={{ position: 'relative', height: '100vh', minHeight: '580px', background: '#0a0a0a', overflow: 'hidden' }}>
-        <img src={Hero} alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5, display: 'block', transform: 'scale(1.04)', animation: 'heroZoom 12s ease-in-out infinite alternate' }} />
+        <img src={Cop} alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7, display: 'block', transform: 'scale(1.04)', animation: 'heroZoom 12s ease-in-out infinite alternate',  objectPosition: '20% 40%', }} />
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(160deg, rgba(0,0,0,0.15) 0%, rgba(10,10,10,0.65) 70%, rgba(10,10,10,0.85) 100%)',
@@ -186,7 +191,7 @@ const Home = () => {
               color: '#fff', marginBottom: '1.5rem', lineHeight: 1.1,
               maxWidth: '680px', fontFamily: "'Cormorant Garamond', serif",
             }}>
-              Every Paw<br />Deserves Love
+              Every Soul<br />Deserves Love
             </h1>
             <p style={{ fontSize: 'clamp(14px, 2vw, 17px)', color: 'rgba(255,255,255,0.75)', maxWidth: '440px', marginBottom: '2.5rem', lineHeight: 1.8, fontFamily: 'inherit' }}>
               Rescuing, rehabilitating, and rehoming street animals across Bangladesh — one life at a time.
@@ -408,21 +413,40 @@ const Home = () => {
             >Learn More</Link>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-            {[
-              { src: cat, h: '250px', mt: '-30px' },
-              { src: dog, h: '230px', mt: '-10px' },
-              { src: cat2, h: '260px', mt: '0px' },
-              { src: pet2, h: '260px', mt: '0' },
-            ].map(({ src, h, mt }, i) => (
-              <div key={i} style={{ overflow: 'hidden', borderRadius: '8px', marginTop: mt }}>
-                <img src={src} alt="" style={{ width: '100%', height: h, objectFit: 'cover', transition: 'transform 0.5s', display: 'block' }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.06)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-                />
-              </div>
-            ))}
-          </div>
+          <div style={{ 
+  display: 'grid', 
+  gridTemplateColumns: '1fr 1fr', 
+  gap: '14px' 
+}}>
+  {[
+    { src: cat, h: '250px', mt: '-30px' },  
+    { src: bird, h: '230px', mt: '10px' },  
+    { src: puppy, h: '280px', mt: '-15px' },  
+    { src: pet2, h: '260px', mt: '10px' },  
+  ].map((item, i) => (
+    <div key={i} style={{
+      overflow: 'hidden',       
+      borderRadius: '12px',
+      marginTop: item.mt,
+    }}>
+      <img
+        src={item.src}
+        alt=""
+        style={{
+          width: '100%',
+          height: item.h,
+          objectFit: 'cover',
+          objectPosition: item.objectPosition || '70% 50%',
+          borderRadius: '12px',
+          display: 'block',
+          transition: 'transform 0.4s ease',
+        }}
+        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
+        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+      />
+    </div>
+  ))}
+</div>
         </div>
       </section>
 
