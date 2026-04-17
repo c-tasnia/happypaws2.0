@@ -52,12 +52,12 @@ export default function DonationPage() {
       .catch(() => {})
   }, [])
 
-  useEffect(() => {
-  fetch(`${import.meta.env.VITE_API_URL}/api/stats`)
+ useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/stats`)
     .then(res => res.json())
-    .then(data => setStats(data))
-    .catch(() => {
-      setStats({ donors: 0, raised: 0, rescued: 0 })
+    .then(data => {
+      console.log("STATS RESPONSE:", data)
+      setStats(data)
     })
 }, [])
 
@@ -139,7 +139,12 @@ export default function DonationPage() {
         <div className="flex justify-center gap-6 mt-8 flex-wrap">
   {[
     [stats.donors, 'Donors'],
-    [`৳${stats.raised?.toLocaleString() || 0}`, 'Raised'],
+    [
+  `৳${stats.raised >= 1000
+    ? (stats.raised / 1000).toFixed(1) + 'k'
+    : stats.raised}`,
+  'Raised'
+],
     [stats.rescued, 'Pets']
   ].map(([n, l]) => (
     <div key={l} className="text-center">
