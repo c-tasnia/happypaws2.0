@@ -6,11 +6,15 @@ const express   = require('express')
 const cors      = require('cors')
 const connectDB = require('./db')
 
+
 const petsRoutes      = require('./routes/pets')
 const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
 const blogRoutes = require('./routes/blogRoutes')
+
+const Donation = require('./models/Donation')
+const Pet = require('./models/Pet')
 
 const Groq = require('groq-sdk')
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
