@@ -90,14 +90,14 @@ const Volunteer = () => {
         >
           <Link to="/" style={linkStyle}>Home</Link>
           <Link to="/donations" style={linkStyle}>Donations</Link>
-          <Link to="#" style={linkStyle}>Blog</Link>
+          <Link to="/blogs" style={linkStyle}>Blog</Link>
           <Link
             to="/volunteer"
             style={{ ...linkStyle, color: TEAL, fontWeight: '600' }}
           >
             Volunteer
           </Link>
-          <Link to="#" style={linkStyle}>Contact</Link>
+          <Link to="/contact" style={linkStyle}>Contact</Link>
         </div>
 
         <div
