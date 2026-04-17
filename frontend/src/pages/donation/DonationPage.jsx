@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { donationsAPI } from '../../api'
 import { Link, useOutletContext } from 'react-router-dom'
+import DonorWall from '../../components/DonorWall'
 
 const PRESETS = [100, 250, 500, 1000]
 const LOGO = '/LOGO1.png'
@@ -339,6 +340,8 @@ export default function DonationPage() {
           </div>
         </div>
       </div>
+
+      <DonorWall  />
 
       <footer className="bg-dark text-white/40 text-center py-6 text-xs">
         © 2026 HappyPaws Bangladesh · Powered by SSLCommerz · Made with 🐾 for animals
