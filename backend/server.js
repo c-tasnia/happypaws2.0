@@ -7,7 +7,7 @@ const cors      = require('cors')
 const connectDB = require('./db')
 const mongoose = require('mongoose')
 
-
+const donorcomments = require('./routes/comments')
 const petsRoutes      = require('./routes/pets')
 const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
@@ -88,6 +88,8 @@ Help users with adoption, donations, and volunteering. Keep responses short and 
   }
 })
 
+
+app.use('/api/comments',  donorcomments)
 app.use('/api/pets',      petsRoutes)
 app.use('/api/donate',    donationsRoutes)
 app.use('/api/donations', donationsRoutes)

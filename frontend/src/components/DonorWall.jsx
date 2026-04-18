@@ -13,7 +13,7 @@ const DonorWall = () => {
 
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/comments')
+    fetch('https://happypaws2-0.vercel.app/api/comments')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch comments');
         return res.json();
@@ -28,7 +28,7 @@ const DonorWall = () => {
     setLoading(true)
 
     try {
-      const res = await fetch('http://localhost:5000/api/comments', {
+      const res = await fetch('https://happypaws2-0.vercel.app/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, isAnonymous }),
