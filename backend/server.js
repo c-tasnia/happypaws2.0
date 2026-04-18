@@ -13,7 +13,7 @@ const donationsRoutes = require('./routes/donations')
 const adminRoutes     = require('./routes/admin')
 const { router: volunteerRoutes } = require('./routes/volunteer')
 const blogRoutes = require('./routes/blogRoutes')
-
+const commentRoutes = require('./routes/comments')
 const Donation = require('./models/Donation')
 
 const Groq = require('groq-sdk')
@@ -94,6 +94,7 @@ app.use('/api/donations', donationsRoutes)
 app.use('/api/admin',     adminRoutes)
 app.use('/api/volunteer', volunteerRoutes)
 app.use('/api',           blogRoutes)
+app.use('/api/comments', commentRoutes)
 
 app.get('/api/stats', async (req, res) => {
   const donors = await Donation.countDocuments()
