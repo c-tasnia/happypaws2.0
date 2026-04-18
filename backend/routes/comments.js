@@ -51,6 +51,7 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
+<<<<<<< HEAD
 /* ================= ❤️ LIKE ================= */
 
 router.post('/:id/like', async (req, res) => {
@@ -92,3 +93,6 @@ router.post('/:id/reply', async (req, res) => {
 })
 
 module.exports = router
+=======
+module.exports = router
+>>>>>>> 097d8bb185314ce678b261d9ebc11f01666f75e9
